@@ -1,10 +1,11 @@
 
-  ${AnsiColor.GREEN}      ██╗${AnsiColor.RED} ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗
-  ${AnsiColor.GREEN}      ██║${AnsiColor.RED} ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗
-  ${AnsiColor.GREEN}      ██║${AnsiColor.RED} ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝
-  ${AnsiColor.GREEN}██╗   ██║${AnsiColor.RED} ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║
-  ${AnsiColor.GREEN}╚██████╔╝${AnsiColor.RED} ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗
-  ${AnsiColor.GREEN} ╚═════╝ ${AnsiColor.RED} ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝
-
-${AnsiColor.BRIGHT_BLUE}:: JHipster 🤓  :: Running Spring Boot ${spring-boot.version} ::
-:: https://www.jhipster.tech ::${AnsiColor.DEFAULT}
+   ${AnsiColor.GREEN} _____                  ${AnsiColor.RED} _                                           _   
+   ${AnsiColor.GREEN}|  __ \                 ${AnsiColor.RED}| |                                         | |  
+   ${AnsiColor.GREEN}| |__) |  _ __    ___   ${AnsiColor.RED}| |__     __ _   _ __  __   __   ___   ___  | |_ 
+   ${AnsiColor.GREEN}|  ___/  | '__|  / _ \  ${AnsiColor.RED}| '_ \   / _` | | '__| \ \ / /  / _ \ / __| | __|
+   ${AnsiColor.GREEN}| |      | |    | (_) | ${AnsiColor.RED}| | | | | (_| | | |     \ V /  |  __/ \__ \ | |_ 
+   ${AnsiColor.GREEN}|_|      |_|     \___/  ${AnsiColor.RED}|_| |_|  \__,_| |_|      \_/    \___| |___/  \__|
+                                                                          
+                                                                          
+${AnsiColor.BRIGHT_BLUE}:: Proharvest reports factory service ::
+:: Running Spring Boot ${spring-boot.version} ::${AnsiColor.DEFAULT}

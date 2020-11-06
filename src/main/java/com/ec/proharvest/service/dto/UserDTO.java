@@ -2,13 +2,10 @@ package com.ec.proharvest.service.dto;
 
 import com.ec.proharvest.config.Constants;
 
-import com.ec.proharvest.domain.Authority;
-import com.ec.proharvest.domain.User;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A DTO representing a user, with his authorities.
@@ -52,24 +49,6 @@ public class UserDTO {
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
-    }
-
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.login = user.getLogin();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.activated = user.getActivated();
-        this.imageUrl = user.getImageUrl();
-        this.langKey = user.getLangKey();
-        this.createdBy = user.getCreatedBy();
-        this.createdDate = user.getCreatedDate();
-        this.lastModifiedBy = user.getLastModifiedBy();
-        this.lastModifiedDate = user.getLastModifiedDate();
-        this.authorities = user.getAuthorities().stream()
-            .map(Authority::getName)
-            .collect(Collectors.toSet());
     }
 
     public String getId() {
