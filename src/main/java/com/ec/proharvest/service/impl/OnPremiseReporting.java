@@ -1,17 +1,23 @@
 package com.ec.proharvest.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.ec.proharvest.config.report.ReportExporter;
 import com.ec.proharvest.config.report.ReportFiller;
-import com.ec.proharvest.repository.PersistenceAuditEventRepository;
+import com.ec.proharvest.domain.ReportingData;
+import com.ec.proharvest.repository.ReportingDataRepository;
 import com.ec.proharvest.service.ReportsManager;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -21,6 +27,7 @@ import org.springframework.stereotype.Service;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JsonDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +43,9 @@ public class OnPremiseReporting implements ReportsManager {
     @Autowired
     ResourceLoader resourceLoader;
 
-    private final PersistenceAuditEventRepository persistenceAuditEventRepository;
+    // private final PersistenceAuditEventRepository persistenceAuditEventRepository;
+
+    private final ReportingDataRepository reportingDataRepository;
 
     private static final String templatesInputStream = "file:/var/lib/proharvest/reportsfactory/templates/";
     private static final String compiledReportsOutputPath = "/var/lib/proharvest/reportsfactory/templates/";
@@ -44,8 +53,9 @@ public class OnPremiseReporting implements ReportsManager {
 
     private final Logger log = LoggerFactory.getLogger(ReportFiller.class);
 
-    public OnPremiseReporting(PersistenceAuditEventRepository persistenceAuditEventRepository) {
-        this.persistenceAuditEventRepository = persistenceAuditEventRepository;
+    public OnPremiseReporting(ReportingDataRepository reportingDataRepository) {
+        // this.persistenceAuditEventRepository = persistenceAuditEventRepository;
+        this.reportingDataRepository = reportingDataRepository;
     }
 
     @Override
@@ -73,8 +83,10 @@ public class OnPremiseReporting implements ReportsManager {
             JasperReport compiledReport = reportFiller.loadCompiledReport(compiledReportInputStream);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("userName", "Electronic-chamber");
-            JasperPrint jspPrint = reportFiller.fillReport(compiledReport, parameters,
-                    persistenceAuditEventRepository.findAll());
+            // creating the report datasource
+            List<ReportingData> sd = this.reportingDataRepository.findAll();
+            JsonNode dataSet = sd.get(1).getDataSet();
+            JasperPrint jspPrint = reportFiller.fillReportWithJsonData(compiledReport, parameters, dataSet);
             OutputStream reportOutputStream;
             switch (reportType) {
                 case "PDF":

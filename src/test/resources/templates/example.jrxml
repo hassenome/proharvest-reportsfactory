@@ -11,9 +11,9 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="userName" class="java.lang.String"/>
-	<field name="principal" class="java.lang.String"/>
-	<field name="auditEventDate" class="java.time.Instant"/>
-	<field name="auditEventType" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="age" class="java.lang.Integer"/>
+	<field name="city" class="java.lang.String"/>
 	<title>
 		<band height="20" splitType="Stretch">
 			<textField>
@@ -32,7 +32,7 @@
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[principal]]></text>
+				<text><![CDATA[name]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="185" y="0" width="185" height="21" forecolor="#006699" backcolor="#E6E6E6" uuid="e9b64414-ad92-4257-a8f2-63a23c460255">
@@ -41,7 +41,7 @@
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[auditEventDate]]></text>
+				<text><![CDATA[age]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="370" y="0" width="185" height="21" forecolor="#006699" backcolor="#E6E6E6" uuid="12ce83f4-fe29-45f6-b1d5-5e016771ec1b">
@@ -50,7 +50,7 @@
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[auditEventType]]></text>
+				<text><![CDATA[city]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -62,19 +62,19 @@
 				<reportElement mode="Opaque" x="0" y="0" width="185" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="55735968-342c-4d29-8dc1-db2263a44d11">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="40a9814d-ecb4-424f-aea8-cad246f112b5"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{principal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="185" y="0" width="185" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="e9b64414-ad92-4257-a8f2-63a23c460255">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="372fc4a5-58e8-4f68-9b0b-b8c92b4521d4"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{auditEventDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="370" y="0" width="185" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="e9b64414-ad92-4257-a8f2-63a23c460255">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="372fc4a5-58e8-4f68-9b0b-b8c92b4521d4"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{auditEventType}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
