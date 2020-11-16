@@ -2,6 +2,7 @@ package com.ec.proharvest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.google.common.collect.Maps;
 
 import org.hibernate.annotations.Cache;
@@ -57,7 +58,7 @@ public class ReportingData implements Serializable {
     @NotNull
     @Type(type = "jsonb")
     @Column(name = "data_set", nullable = false, columnDefinition = "jsonb")
-    private JsonNode dataSet;
+    private BaseJsonNode dataSet;
 
     @ManyToOne
     @JsonIgnoreProperties(value = "reportingData", allowSetters = true)
@@ -84,7 +85,7 @@ public class ReportingData implements Serializable {
     public void setDataName(String dataName) {
         this.dataName = dataName;
     }
-    public ReportingData dataSet(JsonNode dataSet) {
+    public ReportingData dataSet(BaseJsonNode dataSet) {
         this.dataSet = dataSet;
         return this;
     }
@@ -93,7 +94,7 @@ public class ReportingData implements Serializable {
         return dataSet;
     }
 
-    public void setDataSet(JsonNode dataSet) {
+    public void setDataSet(BaseJsonNode dataSet) {
         this.dataSet = dataSet;
     }
 
