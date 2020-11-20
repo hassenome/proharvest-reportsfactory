@@ -1,39 +1,33 @@
 package com.ec.proharvest.service.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.ec.proharvest.config.report.ReportExporter;
 import com.ec.proharvest.config.report.ReportFiller;
-import com.ec.proharvest.domain.ReportingData;
-import com.ec.proharvest.repository.ReportingDataRepository;
+import com.ec.proharvest.domain.ReportDocument;
+import com.ec.proharvest.domain.ReportFile;
+import com.ec.proharvest.repository.ReportDocumentRepository;
+import com.ec.proharvest.repository.ReportingDataSetRepository;
 import com.ec.proharvest.service.ReportsManager;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.ec.proharvest.service.error.InvalidFileTypeException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JsonDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class OnPremiseReporting implements ReportsManager {
+public class OnPremiseReporting extends ReportsManager {
     @Autowired
     ReportFiller reportFiller;
 
@@ -41,75 +35,72 @@ public class OnPremiseReporting implements ReportsManager {
     ReportExporter reportExporter;
 
     @Autowired
-    ResourceLoader resourceLoader;
+    ReportingDataSetRepository dataSetRepository;
 
     // private final PersistenceAuditEventRepository persistenceAuditEventRepository;
 
-    private final ReportingDataRepository reportingDataRepository;
+    // private final ReportingDataRepository reportingDataRepository;
+    private final ReportDocumentRepository reportDocumentRepository;
 
-    private static final String templatesInputStream = "file:/var/lib/proharvest/reportsfactory/templates/";
-    private static final String compiledReportsOutputPath = "/var/lib/proharvest/reportsfactory/templates/";
-    private static final String reportsOutputPath = "/var/lib/proharvest/reportsfactory/output/";
+    // TODO: export these to properties
+    private static final String TEMPLATES_INPUT_STREAM = "file:/var/lib/proharvest/reportsfactory/templates/";
+    private static final String COMPILED_REPORTS_OUTPUT_PATH = "/var/lib/proharvest/reportsfactory/templates/";
+    private static final String GENERATED_REPORTS_OUTPUT_PATH = "/var/lib/proharvest/reportsfactory/output/";
 
-    private final Logger log = LoggerFactory.getLogger(ReportFiller.class);
+    private final Logger log = LoggerFactory.getLogger(OnPremiseReporting.class);
 
-    public OnPremiseReporting(ReportingDataRepository reportingDataRepository) {
+    public OnPremiseReporting(ReportDocumentRepository reportDocumentRepository) {
         // this.persistenceAuditEventRepository = persistenceAuditEventRepository;
-        this.reportingDataRepository = reportingDataRepository;
+        this.reportDocumentRepository = reportDocumentRepository;
     }
 
     @Override
-    public void compileReportTemplate(String reportName) throws JRException, IOException {
+    public void compileReportTemplate(ReportDocument reportDocument) throws JRException, IOException {
         try {
             InputStream reportInputStream = this
-                    .loadRessourceFile(templatesInputStream.concat(reportName).concat(".jrxml"));
+                    .loadRessourceFile(TEMPLATES_INPUT_STREAM.concat(reportDocument.getName()).concat(".jrxml"));
             OutputStream reportOutputStream = new FileOutputStream(
-                    compiledReportsOutputPath.concat(reportName).concat(".jasper"));
+                    COMPILED_REPORTS_OUTPUT_PATH.concat(reportDocument.getName()).concat(".jasper"));
             reportFiller.compileReport(reportInputStream, reportOutputStream);
         } catch (JRException ex) {
-            log.error("Unable to compile report from ressource " + reportName + ", reason: ", ex.getClass());
+            log.error("Unable to compile report from ressource " + reportDocument.getName() + ", reason: ", ex.getClass());
             throw ex;
         } catch (IOException e) {
-            log.error("Unable to load report template from ressource " + reportName + ", reason: ", e.getMessage());
+            log.error("Unable to load report template from ressource " + reportDocument.getName() + ", reason: ", e.getMessage());
             throw e;
         }
     }
 
     @Override
-    public void generateReport(String reportName, String reportType) throws JRException, IOException {
+    public ReportFile generateReport(ReportDocument reportDocument) throws JRException, IOException {
+        OutputStream reportOutputStream = null;
+        String fileName = this.createtFileName(reportDocument);
+        reportOutputStream = new FileOutputStream(GENERATED_REPORTS_OUTPUT_PATH.concat(fileName));
         try {
             InputStream compiledReportInputStream = this
-                    .loadRessourceFile("file:" + compiledReportsOutputPath.concat(reportName).concat(".jasper"));
+                    .loadRessourceFile("file:" + COMPILED_REPORTS_OUTPUT_PATH.concat(reportDocument.getName()).concat(".jasper"));
             JasperReport compiledReport = reportFiller.loadCompiledReport(compiledReportInputStream);
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("userName", "Electronic-chamber");
-            // creating the report datasource
-            List<ReportingData> sd = this.reportingDataRepository.findAll();
-            JsonNode dataSet = sd.get(1).getDataSet();
-            JasperPrint jspPrint = reportFiller.fillReportWithJsonData(compiledReport, parameters, dataSet);
-            OutputStream reportOutputStream;
-            switch (reportType) {
-                case "PDF":
-                    reportOutputStream = new FileOutputStream(reportsOutputPath.concat(reportName).concat(".pdf"));
-                    reportExporter.exportToPdf(jspPrint, reportOutputStream, "e-chamber");
+            // reportDocument.setReportingDataSets(new HashSet<>(dataSetRepository.findByReportDocument(reportDocument)));
+            ArrayNode node = dataSetRepository.getDataSetsAsArrayNode(reportDocument);
+            JasperPrint jspPrint = reportFiller.fillReportWithJsonData(compiledReport, reportDocument.getReportParameters().getMapParametersSet(), node);
+            switch (reportDocument.getReportConfig().getFileType()) {
+                case PDF:                    
+                    reportExporter.exportToPdf(jspPrint, reportOutputStream, reportDocument.getReportConfig());
                     break;
 
-                case "HTML":
-                    reportOutputStream = new FileOutputStream(reportsOutputPath.concat(reportName).concat(".html"));
+                case HTML:
                     reportExporter.exportToHtml(jspPrint, reportOutputStream);
                     break;
 
                 default:
-                    break;
+                    throw new InvalidFileTypeException("Unhadled file type " + reportDocument.getReportConfig().getFileType());
             }
+            return this.processReportFileEntity(fileName, reportDocument);
         } catch (JRException | IOException ex) {
             throw ex;
+        } finally{
+            reportOutputStream.close();
         }
-    }
-
-    private InputStream loadRessourceFile(String path) throws IOException {
-        Resource resource = resourceLoader.getResource(path);
-        return resource.getInputStream();
     }
 
     @Override

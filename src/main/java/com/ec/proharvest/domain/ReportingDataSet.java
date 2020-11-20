@@ -1,9 +1,7 @@
 package com.ec.proharvest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
-import com.google.common.collect.Maps;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -14,9 +12,6 @@ import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -28,7 +23,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 /**
- * A ReportingData.
+ * A ReportingDataSet.
  */
 @Entity
 @TypeDefs({
@@ -39,10 +34,9 @@ import org.hibernate.annotations.TypeDefs;
     @TypeDef(name = "jsonb-node", typeClass = JsonNodeBinaryType.class),
     @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
 })
-@Table(name = "reporting_data")
-// @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "reportingdata")
-public class ReportingData implements Serializable {
+@Table(name = "reporting_data_sets")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "reportingdataset")
+public class ReportingDataSet implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,14 +48,14 @@ public class ReportingData implements Serializable {
     @NotNull
     @Column(name = "data_name", nullable = false)
     private String dataName;
-
+    
     @NotNull
     @Type(type = "jsonb")
     @Column(name = "data_set", nullable = false, columnDefinition = "jsonb")
     private BaseJsonNode dataSet;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "reportingData", allowSetters = true)
+    @JsonIgnoreProperties(value = "reportingDataSet", allowSetters = true)
     private ReportDocument reportDocument;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -77,7 +71,7 @@ public class ReportingData implements Serializable {
         return dataName;
     }
 
-    public ReportingData dataName(String dataName) {
+    public ReportingDataSet dataName(String dataName) {
         this.dataName = dataName;
         return this;
     }
@@ -85,13 +79,14 @@ public class ReportingData implements Serializable {
     public void setDataName(String dataName) {
         this.dataName = dataName;
     }
-    public ReportingData dataSet(BaseJsonNode dataSet) {
-        this.dataSet = dataSet;
-        return this;
+
+    public BaseJsonNode getDataSet() {
+        return dataSet;
     }
 
-    public JsonNode getDataSet() {
-        return dataSet;
+    public ReportingDataSet dataSet(BaseJsonNode dataSet) {
+        this.dataSet = dataSet;
+        return this;
     }
 
     public void setDataSet(BaseJsonNode dataSet) {
@@ -102,7 +97,7 @@ public class ReportingData implements Serializable {
         return reportDocument;
     }
 
-    public ReportingData reportDocument(ReportDocument reportDocument) {
+    public ReportingDataSet reportDocument(ReportDocument reportDocument) {
         this.reportDocument = reportDocument;
         return this;
     }
@@ -117,10 +112,10 @@ public class ReportingData implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ReportingData)) {
+        if (!(o instanceof ReportingDataSet)) {
             return false;
         }
-        return id != null && id.equals(((ReportingData) o).id);
+        return id != null && id.equals(((ReportingDataSet) o).id);
     }
 
     @Override
@@ -131,7 +126,7 @@ public class ReportingData implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "ReportingData{" +
+        return "ReportingDataSet{" +
             "id=" + getId() +
             ", dataName='" + getDataName() + "'" +
             ", dataSet='" + getDataSet() + "'" +

@@ -1,0 +1,132 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.9.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <changeSet author="methanome (generated)" id="1605743927748-2">
+        <createTable tableName="report_config">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="report_configPK"/>
+            </column>
+            <column name="author" type="VARCHAR(255)"/>
+            <column name="file_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prefix" type="VARCHAR(255)"/>
+            <column name="report_export_config" type="JSONB"/>
+            <column name="storage_type" type="VARCHAR(255)"/>
+            <column name="suffix" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-3">
+        <createTable tableName="report_document">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="report_documentPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_config_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_parameters_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_type_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-4">
+        <createTable tableName="report_file">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="report_filePK"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="path" type="VARCHAR(255)"/>
+            <column name="tags" type="VARCHAR(255)"/>
+            <column name="report_document_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-5">
+        <createTable tableName="report_language">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="report_languagePK"/>
+            </column>
+            <column name="abbreviation" type="VARCHAR(3)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-6">
+        <createTable tableName="report_parameters">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="report_parametersPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parameters_set" type="JSONB">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-7">
+        <createTable tableName="report_type">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="report_typePK"/>
+            </column>
+            <column name="category" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reference" type="VARCHAR(255)"/>
+            <column name="report_language_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-8">
+        <createTable tableName="reporting_data_sets">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="reporting_data_setsPK"/>
+            </column>
+            <column name="data_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_set" type="JSONB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_document_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-9">
+        <addUniqueConstraint columnNames="file_name" constraintName="UC_REPORT_FILEFILE_NAME_COL" tableName="report_file"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-10">
+        <addForeignKeyConstraint baseColumnNames="report_document_id" baseTableName="reporting_data_sets" constraintName="FK4arq384qbxfovaievx56o52ac" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="report_document" validate="true"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-11">
+        <addForeignKeyConstraint baseColumnNames="report_language_id" baseTableName="report_type" constraintName="FK4u9v5o4fwjv4dw9jictgia7al" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="report_language" validate="true"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-12">
+        <addForeignKeyConstraint baseColumnNames="report_document_id" baseTableName="report_file" constraintName="FK7presogdikkx91d1ejackdtpw" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="report_document" validate="true"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-13">
+        <addForeignKeyConstraint baseColumnNames="report_config_id" baseTableName="report_document" constraintName="FKj65ua7gquf96bk1mkrmi2tgeu" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="report_config" validate="true"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-14">
+        <addForeignKeyConstraint baseColumnNames="report_type_id" baseTableName="report_document" constraintName="FKn003r7bl3ehiwf50axke6ql9b" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="report_type" validate="true"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1605743927748-15">
+        <addForeignKeyConstraint baseColumnNames="report_parameters_id" baseTableName="report_document" constraintName="FKp6gxstoaunw27dqot6yvb3m9a" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="report_parameters" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

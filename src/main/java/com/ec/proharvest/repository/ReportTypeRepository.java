@@ -1,14 +1,14 @@
 package com.ec.proharvest.repository;
 
-import com.ec.proharvest.domain.ReportingData;
+import com.ec.proharvest.domain.ReportType;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data  repository for the ReportingData entity.
+ * Spring Data  repository for the ReportType entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ReportingDataRepository extends JpaRepository<ReportingData, Long> {
+public interface ReportTypeRepository extends JpaRepository<ReportType, Long> {
 }

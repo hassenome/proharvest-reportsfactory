@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
 
+import com.ec.proharvest.config.report.error.WrongParametersException;
+import com.ec.proharvest.domain.PdfReportConfig;
+import com.ec.proharvest.domain.ReportConfig;
+import com.ec.proharvest.domain.ReportFile;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,27 +24,32 @@ public class ReportExporter {
     
     private final Logger log = LoggerFactory.getLogger(ReportFiller.class);
 
-    public void exportToPdf(JasperPrint jasperPrint, OutputStream fileOutputStream, String author) throws JRException {
+    public void exportToPdf(JasperPrint jasperPrint, OutputStream fileOutputStream, ReportConfig reportConfig) throws JRException {
 
+        if (!(reportConfig.getReportExportConfig() instanceof PdfReportConfig)) { 
+            throw new WrongParametersException("Expected field reportExportConfig to be of type" + PdfReportConfig.class + " , got " + reportConfig.getReportExportConfig().getClass() + " instead");
+          }
+        PdfReportConfig pdfReportConfig = (PdfReportConfig) reportConfig.getReportExportConfig();
         // print report to file
         JRPdfExporter exporter = new JRPdfExporter();
 
         exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
         exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(fileOutputStream));
 
-        SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
-        reportConfig.setSizePageToContent(true);
-        reportConfig.setForceLineBreakPolicy(false);
+        SimplePdfReportConfiguration simplePdfConfig = new SimplePdfReportConfiguration();
+        simplePdfConfig.setSizePageToContent(pdfReportConfig.getSizePageToContent());
+        simplePdfConfig.setForceLineBreakPolicy(pdfReportConfig.getForceLineBreakPolicy());
 
         SimplePdfExporterConfiguration exportConfig = new SimplePdfExporterConfiguration();
-        exportConfig.setMetadataAuthor(author);
-        exportConfig.setEncrypted(true);
-        exportConfig.setAllowedPermissionsHint("PRINTING");
+        exportConfig.setMetadataAuthor(reportConfig.getAuthor());
+        exportConfig.setEncrypted(pdfReportConfig.getEncrypted());
+        exportConfig.setAllowedPermissionsHint(pdfReportConfig.getAllowedPermissionsHint());
 
-        exporter.setConfiguration(reportConfig);
+        exporter.setConfiguration(simplePdfConfig);
         exporter.setConfiguration(exportConfig);
         try {
             exporter.exportReport();
+
         } catch (JRException ex) {
             log.error("Error while exporting PDF report " + jasperPrint.getName() + ", reason: \n", ex.getMessage());
             throw ex;
