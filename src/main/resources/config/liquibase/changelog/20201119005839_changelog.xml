@@ -16,7 +16,6 @@
             <column name="report_export_config" type="JSONB"/>
             <column name="storage_type" type="VARCHAR(255)"/>
             <column name="suffix" type="VARCHAR(255)"/>
-            <column name="title" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
     <changeSet author="methanome (generated)" id="1605743927748-3">

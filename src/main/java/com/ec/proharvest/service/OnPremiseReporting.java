@@ -1,4 +1,4 @@
-package com.ec.proharvest.service.impl;
+package com.ec.proharvest.service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,7 +12,6 @@ import com.ec.proharvest.domain.ReportDocument;
 import com.ec.proharvest.domain.ReportFile;
 import com.ec.proharvest.repository.ReportDocumentRepository;
 import com.ec.proharvest.repository.ReportingDataSetRepository;
-import com.ec.proharvest.service.ReportsManager;
 import com.ec.proharvest.service.error.InvalidFileTypeException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -58,15 +57,15 @@ public class OnPremiseReporting extends ReportsManager {
     public void compileReportTemplate(ReportDocument reportDocument) throws JRException, IOException {
         try {
             InputStream reportInputStream = this
-                    .loadRessourceFile(TEMPLATES_INPUT_STREAM.concat(reportDocument.getName()).concat(".jrxml"));
+                    .loadRessourceFile(TEMPLATES_INPUT_STREAM.concat(reportDocument.getReportType().getTemplateName()).concat(".jrxml"));
             OutputStream reportOutputStream = new FileOutputStream(
-                    COMPILED_REPORTS_OUTPUT_PATH.concat(reportDocument.getName()).concat(".jasper"));
+                    COMPILED_REPORTS_OUTPUT_PATH.concat(reportDocument.getReportType().getTemplateName()).concat(".jasper"));
             reportFiller.compileReport(reportInputStream, reportOutputStream);
         } catch (JRException ex) {
-            log.error("Unable to compile report from ressource " + reportDocument.getName() + ", reason: ", ex.getClass());
+            log.error("Unable to compile report from ressource " + reportDocument.getReportType().getTemplateName() + ", reason: ", ex.getClass());
             throw ex;
         } catch (IOException e) {
-            log.error("Unable to load report template from ressource " + reportDocument.getName() + ", reason: ", e.getMessage());
+            log.error("Unable to load report template from ressource " + reportDocument.getReportType().getTemplateName() + ", reason: ", e.getMessage());
             throw e;
         }
     }
@@ -78,7 +77,7 @@ public class OnPremiseReporting extends ReportsManager {
         reportOutputStream = new FileOutputStream(GENERATED_REPORTS_OUTPUT_PATH.concat(fileName));
         try {
             InputStream compiledReportInputStream = this
-                    .loadRessourceFile("file:" + COMPILED_REPORTS_OUTPUT_PATH.concat(reportDocument.getName()).concat(".jasper"));
+                    .loadRessourceFile("file:" + COMPILED_REPORTS_OUTPUT_PATH.concat(reportDocument.getReportType().getTemplateName()).concat(".jasper"));
             JasperReport compiledReport = reportFiller.loadCompiledReport(compiledReportInputStream);
             // reportDocument.setReportingDataSets(new HashSet<>(dataSetRepository.findByReportDocument(reportDocument)));
             ArrayNode node = dataSetRepository.getDataSetsAsArrayNode(reportDocument);

@@ -1,6 +1,5 @@
 package com.ec.proharvest.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -30,15 +29,8 @@ public class ReportType implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "reference")
-    private String reference;
-
-    @Column(name = "category")
-    private String category;
-
-    @ManyToOne
-    @JsonIgnoreProperties(value = "reportTypes", allowSetters = true)
-    private ReportLanguage reportLanguage;
+    @Column(name = "template_name")
+    private String templateName;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -62,43 +54,17 @@ public class ReportType implements Serializable {
         this.name = name;
     }
 
-    public String getReference() {
-        return reference;
+    public String getTemplateName() {
+        return templateName;
     }
 
-    public ReportType reference(String reference) {
-        this.reference = reference;
+    public ReportType templateName(String templateName) {
+        this.templateName = templateName;
         return this;
     }
 
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public ReportType category(String category) {
-        this.category = category;
-        return this;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public ReportLanguage getReportLanguage() {
-        return reportLanguage;
-    }
-
-    public ReportType reportLanguage(ReportLanguage reportLanguage) {
-        this.reportLanguage = reportLanguage;
-        return this;
-    }
-
-    public void setReportLanguage(ReportLanguage reportLanguage) {
-        this.reportLanguage = reportLanguage;
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
@@ -124,8 +90,7 @@ public class ReportType implements Serializable {
         return "ReportType{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", reference='" + getReference() + "'" +
-            ", category='" + getCategory() + "'" +
+            ", templateName='" + getTemplateName() + "'" +
             "}";
     }
 }

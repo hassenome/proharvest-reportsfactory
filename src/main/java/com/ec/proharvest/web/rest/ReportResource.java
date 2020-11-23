@@ -3,7 +3,6 @@ package com.ec.proharvest.web.rest;
 import com.ec.proharvest.domain.PdfReportConfig;
 import com.ec.proharvest.domain.ReportConfig;
 import com.ec.proharvest.domain.ReportDocument;
-import com.ec.proharvest.domain.ReportLanguage;
 import com.ec.proharvest.domain.ReportParameters;
 import com.ec.proharvest.domain.ReportType;
 import com.ec.proharvest.domain.ReportingDataSet;
@@ -11,11 +10,10 @@ import com.ec.proharvest.domain.enumeration.FileType;
 import com.ec.proharvest.domain.enumeration.StorageType;
 import com.ec.proharvest.repository.ReportConfigRepository;
 import com.ec.proharvest.repository.ReportDocumentRepository;
-import com.ec.proharvest.repository.ReportLanguageRepository;
 import com.ec.proharvest.repository.ReportParametersRepository;
 import com.ec.proharvest.repository.ReportTypeRepository;
 import com.ec.proharvest.repository.ReportingDataSetRepository;
-import com.ec.proharvest.service.impl.OnPremiseReporting;
+import com.ec.proharvest.service.OnPremiseReporting;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,9 +45,6 @@ public class ReportResource {
     ReportTypeRepository reportTypeRepository;
 
     @Autowired
-    ReportLanguageRepository languageRepository;
-
-    @Autowired
     ReportParametersRepository reportParametersRepository;
 
     @Autowired
@@ -65,7 +60,7 @@ public class ReportResource {
     public ResponseEntity<String> compileReport() {
         try {
             // this.createData();
-            ReportDocument rptDoc = this.reportDocumentRepository.findByNameWithData("example").get(0);
+            ReportDocument rptDoc = this.reportDocumentRepository.findByName("example").get(0);
             this.reportsManager.compileReportTemplate(rptDoc);
             // HttpHeaders headers =
             // PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(),
@@ -79,7 +74,7 @@ public class ReportResource {
     @GetMapping("/reports/generate")
     public ResponseEntity<String> generateReport() {
         try {
-            ReportDocument rptDoc = this.reportDocumentRepository.findByName("example").get(0);
+            ReportDocument rptDoc = this.reportDocumentRepository.findByNameWithData("example").get(0);
             this.reportsManager.generateReport(rptDoc);
             // HttpHeaders headers =
             // PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(),
@@ -136,6 +131,7 @@ public class ReportResource {
         pdfConfig.setSizePageToContent(true);
         pdfConfig.setUserPassword("PRH");
         pdfConfig.setOwnerPassword("ECH");
+        pdfConfig.setExporterClass("PdfReportConfig");
 
         ReportConfig reportConf = new ReportConfig();
         reportConf.setAuthor("E-CHAMBER");
@@ -145,21 +141,12 @@ public class ReportResource {
         reportConf.setReportExportConfig(pdfConfig);
         reportConf.setStorageType(StorageType.OP);
         reportConf.setSuffix("_testbench");
-        reportConf.setTitle("PROTOTYPE-PDF");
 
         this.reportConfigRepository.save(reportConf);
 
-        ReportLanguage rpLg = new ReportLanguage();
-        rpLg.setAbbreviation("EN");
-        rpLg.setName("English");
-
-        this.languageRepository.save(rpLg);
-
         ReportType reportType = new ReportType();
-        reportType.setCategory("testbench");
         reportType.setName("prototype");
-        reportType.setReference("ECTSTBENCH");
-        reportType.setReportLanguage(rpLg);
+        reportType.setTemplateName("template_example");
 
         this.reportTypeRepository.save(reportType);
 

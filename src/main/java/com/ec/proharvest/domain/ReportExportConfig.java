@@ -1,12 +1,17 @@
 package com.ec.proharvest.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
 
 public abstract class ReportExportConfig implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = 1L;
+
+    @NotNull
     private String exporterClass;
 
     public static final String EXPORTER_CLASS_FIELD = "exporterClass";
@@ -16,7 +21,7 @@ public abstract class ReportExportConfig implements Serializable {
     }
 
     public void setExporterClass(String exporterClass) {
-        this.exporterClass = exporterClass;
+        this.exporterClass = Objects.requireNonNull(exporterClass, "exporterClass cannot be null");
     }
     
 }

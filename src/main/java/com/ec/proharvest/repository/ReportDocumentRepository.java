@@ -16,9 +16,9 @@ import org.springframework.stereotype.Repository;
 public interface ReportDocumentRepository extends JpaRepository<ReportDocument, Long> {
     List<ReportDocument> findByName(String name);
 
-    @Query("select dts from ReportingDataSet dts join fetch dts.reportDocument rp where rp.id = :id")
+    @Query("select rp from ReportDocument rp join fetch rp.reportingDataSets where rp.id = :id")
     List<ReportDocument> findByIdWithData(@Param("id") Long id);
     
-    @Query("select dts from ReportingDataSet dts join fetch dts.reportDocument rp where rp.name = :name")
+    @Query("select rp from ReportDocument rp join fetch rp.reportingDataSets where rp.name = :name")
     List<ReportDocument> findByNameWithData(@Param("name") String name);
 }

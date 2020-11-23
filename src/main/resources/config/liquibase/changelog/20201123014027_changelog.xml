@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.9.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <changeSet author="methanome (generated)" id="1606095636588-2">
+        <addColumn tableName="report_type">
+            <column name="template_name" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1606095636588-3">
+        <dropForeignKeyConstraint baseTableName="report_type" constraintName="FK4u9v5o4fwjv4dw9jictgia7al"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1606095636588-4">
+        <dropTable tableName="report_language"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1606095636588-5">
+        <dropColumn columnName="category" tableName="report_type"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1606095636588-6">
+        <dropColumn columnName="reference" tableName="report_type"/>
+    </changeSet>
+    <changeSet author="methanome (generated)" id="1606095636588-7">
+        <dropColumn columnName="report_language_id" tableName="report_type"/>
+    </changeSet>
+</databaseChangeLog>

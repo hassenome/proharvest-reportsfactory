@@ -71,9 +71,6 @@ public class ReportConfig implements Serializable {
     @Column(name = "author")
     private String author;
 
-    @Column(name = "title")
-    private String title;
-
     @Type(type = "jsonb")
     @Column(name = "report_export_config", columnDefinition = "jsonb")
     private BaseJsonNode reportExportConfig;
@@ -163,22 +160,7 @@ public class ReportConfig implements Serializable {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public ReportConfig title(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    
+    }    
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
     @Override
@@ -201,11 +183,12 @@ public class ReportConfig implements Serializable {
     public String toString() {
         return "ReportConfig [author=" + author + ", fileType=" + fileType + ", id=" + id + ", name=" + name
                 + ", prefix=" + prefix + ", reportExportConfig=" + reportExportConfig + ", storageType=" + storageType
-                + ", suffix=" + suffix + ", title=" + title + "]";
+                + ", suffix=" + suffix + "]";
     }
 
     // TODO export this to some conversion/transformer class
     public ReportExportConfig getReportExportConfig() {
+        // TODO: handle null pointer when exporterClass is undefined
         String exporterClass = reportExportConfig.path(ReportExportConfig.EXPORTER_CLASS_FIELD).textValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -224,6 +207,7 @@ public class ReportConfig implements Serializable {
     }
 
     public void setReportExportConfig(ReportExportConfig reportExportConfig) {
+        // TODO: handle null pointer when exporterClass is undefined
         ObjectMapper mapper = new ObjectMapper();
         this.reportExportConfig = mapper.valueToTree(reportExportConfig);
     }
