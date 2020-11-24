@@ -23,5 +23,11 @@ public abstract class ReportExportConfig implements Serializable {
     public void setExporterClass(String exporterClass) {
         this.exporterClass = Objects.requireNonNull(exporterClass, "exporterClass cannot be null");
     }
+
+    protected ReportExportConfig() {
+        this.exporterClass = this.getClass().getSimpleName();
+    }
+
+    
     
 }

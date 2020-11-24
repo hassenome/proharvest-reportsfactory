@@ -37,9 +37,6 @@ public class ReportFile implements Serializable {
     @Column(name = "modified")
     private Instant modified;
 
-    @Column(name = "tags")
-    private String tags;
-
     @Column(name = "path")
     private String path;
 
@@ -96,19 +93,6 @@ public class ReportFile implements Serializable {
         this.modified = modified;
     }
 
-    public String getTags() {
-        return tags;
-    }
-
-    public ReportFile tags(String tags) {
-        this.tags = tags;
-        return this;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
     public String getPath() {
         return path;
     }
@@ -160,7 +144,6 @@ public class ReportFile implements Serializable {
             ", fileName='" + getFileName() + "'" +
             ", created='" + getCreated() + "'" +
             ", modified='" + getModified() + "'" +
-            ", tags='" + getTags() + "'" +
             ", path='" + getPath() + "'" +
             "}";
     }

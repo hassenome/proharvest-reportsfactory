@@ -50,7 +50,6 @@
             </column>
             <column name="modified" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="path" type="VARCHAR(255)"/>
-            <column name="tags" type="VARCHAR(255)"/>
             <column name="report_document_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>

@@ -131,7 +131,6 @@ public class ReportResource {
         pdfConfig.setSizePageToContent(true);
         pdfConfig.setUserPassword("PRH");
         pdfConfig.setOwnerPassword("ECH");
-        pdfConfig.setExporterClass("PdfReportConfig");
 
         ReportConfig reportConf = new ReportConfig();
         reportConf.setAuthor("E-CHAMBER");

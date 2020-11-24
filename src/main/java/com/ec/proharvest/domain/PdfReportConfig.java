@@ -85,5 +85,5 @@ public class PdfReportConfig extends ReportExportConfig {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
-    }
+    }    
 }
