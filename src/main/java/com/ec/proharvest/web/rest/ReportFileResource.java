@@ -1,9 +1,8 @@
 package com.ec.proharvest.web.rest;
 
-import com.ec.proharvest.domain.ReportFile;
-import com.ec.proharvest.repository.ReportFileRepository;
-import com.ec.proharvest.repository.search.ReportFileSearchRepository;
+import com.ec.proharvest.service.ReportFileService;
 import com.ec.proharvest.web.rest.errors.BadRequestAlertException;
+import com.ec.proharvest.service.dto.ReportFileDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -35,7 +32,6 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class ReportFileResource {
 
     private final Logger log = LoggerFactory.getLogger(ReportFileResource.class);
@@ -45,30 +41,26 @@ public class ReportFileResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final ReportFileRepository reportFileRepository;
+    private final ReportFileService reportFileService;
 
-    private final ReportFileSearchRepository reportFileSearchRepository;
-
-    public ReportFileResource(ReportFileRepository reportFileRepository, ReportFileSearchRepository reportFileSearchRepository) {
-        this.reportFileRepository = reportFileRepository;
-        this.reportFileSearchRepository = reportFileSearchRepository;
+    public ReportFileResource(ReportFileService reportFileService) {
+        this.reportFileService = reportFileService;
     }
 
     /**
      * {@code POST  /report-files} : Create a new reportFile.
      *
-     * @param reportFile the reportFile to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new reportFile, or with status {@code 400 (Bad Request)} if the reportFile has already an ID.
+     * @param reportFileDTO the reportFileDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new reportFileDTO, or with status {@code 400 (Bad Request)} if the reportFile has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/report-files")
-    public ResponseEntity<ReportFile> createReportFile(@Valid @RequestBody ReportFile reportFile) throws URISyntaxException {
-        log.debug("REST request to save ReportFile : {}", reportFile);
-        if (reportFile.getId() != null) {
+    public ResponseEntity<ReportFileDTO> createReportFile(@Valid @RequestBody ReportFileDTO reportFileDTO) throws URISyntaxException {
+        log.debug("REST request to save ReportFile : {}", reportFileDTO);
+        if (reportFileDTO.getId() != null) {
             throw new BadRequestAlertException("A new reportFile cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ReportFile result = reportFileRepository.save(reportFile);
-        reportFileSearchRepository.save(result);
+        ReportFileDTO result = reportFileService.save(reportFileDTO);
         return ResponseEntity.created(new URI("/api/report-files/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -77,22 +69,21 @@ public class ReportFileResource {
     /**
      * {@code PUT  /report-files} : Updates an existing reportFile.
      *
-     * @param reportFile the reportFile to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reportFile,
-     * or with status {@code 400 (Bad Request)} if the reportFile is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the reportFile couldn't be updated.
+     * @param reportFileDTO the reportFileDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reportFileDTO,
+     * or with status {@code 400 (Bad Request)} if the reportFileDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reportFileDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/report-files")
-    public ResponseEntity<ReportFile> updateReportFile(@Valid @RequestBody ReportFile reportFile) throws URISyntaxException {
-        log.debug("REST request to update ReportFile : {}", reportFile);
-        if (reportFile.getId() == null) {
+    public ResponseEntity<ReportFileDTO> updateReportFile(@Valid @RequestBody ReportFileDTO reportFileDTO) throws URISyntaxException {
+        log.debug("REST request to update ReportFile : {}", reportFileDTO);
+        if (reportFileDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        ReportFile result = reportFileRepository.save(reportFile);
-        reportFileSearchRepository.save(result);
+        ReportFileDTO result = reportFileService.save(reportFileDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reportFile.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reportFileDTO.getId().toString()))
             .body(result);
     }
 
@@ -103,9 +94,9 @@ public class ReportFileResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reportFiles in body.
      */
     @GetMapping("/report-files")
-    public ResponseEntity<List<ReportFile>> getAllReportFiles(Pageable pageable) {
+    public ResponseEntity<List<ReportFileDTO>> getAllReportFiles(Pageable pageable) {
         log.debug("REST request to get a page of ReportFiles");
-        Page<ReportFile> page = reportFileRepository.findAll(pageable);
+        Page<ReportFileDTO> page = reportFileService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -113,27 +104,26 @@ public class ReportFileResource {
     /**
      * {@code GET  /report-files/:id} : get the "id" reportFile.
      *
-     * @param id the id of the reportFile to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reportFile, or with status {@code 404 (Not Found)}.
+     * @param id the id of the reportFileDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reportFileDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/report-files/{id}")
-    public ResponseEntity<ReportFile> getReportFile(@PathVariable Long id) {
+    public ResponseEntity<ReportFileDTO> getReportFile(@PathVariable Long id) {
         log.debug("REST request to get ReportFile : {}", id);
-        Optional<ReportFile> reportFile = reportFileRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(reportFile);
+        Optional<ReportFileDTO> reportFileDTO = reportFileService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(reportFileDTO);
     }
 
     /**
      * {@code DELETE  /report-files/:id} : delete the "id" reportFile.
      *
-     * @param id the id of the reportFile to delete.
+     * @param id the id of the reportFileDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/report-files/{id}")
     public ResponseEntity<Void> deleteReportFile(@PathVariable Long id) {
         log.debug("REST request to delete ReportFile : {}", id);
-        reportFileRepository.deleteById(id);
-        reportFileSearchRepository.deleteById(id);
+        reportFileService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
@@ -146,9 +136,9 @@ public class ReportFileResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/report-files")
-    public ResponseEntity<List<ReportFile>> searchReportFiles(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<ReportFileDTO>> searchReportFiles(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of ReportFiles for query {}", query);
-        Page<ReportFile> page = reportFileSearchRepository.search(queryStringQuery(query), pageable);
+        Page<ReportFileDTO> page = reportFileService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
         }

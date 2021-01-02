@@ -1,9 +1,8 @@
 package com.ec.proharvest.web.rest;
 
-import com.ec.proharvest.domain.ReportConfig;
-import com.ec.proharvest.repository.ReportConfigRepository;
-import com.ec.proharvest.repository.search.ReportConfigSearchRepository;
+import com.ec.proharvest.service.ReportConfigService;
 import com.ec.proharvest.web.rest.errors.BadRequestAlertException;
+import com.ec.proharvest.service.dto.ReportConfigDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -35,7 +32,6 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class ReportConfigResource {
 
     private final Logger log = LoggerFactory.getLogger(ReportConfigResource.class);
@@ -45,30 +41,26 @@ public class ReportConfigResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final ReportConfigRepository reportConfigRepository;
+    private final ReportConfigService reportConfigService;
 
-    private final ReportConfigSearchRepository reportConfigSearchRepository;
-
-    public ReportConfigResource(ReportConfigRepository reportConfigRepository, ReportConfigSearchRepository reportConfigSearchRepository) {
-        this.reportConfigRepository = reportConfigRepository;
-        this.reportConfigSearchRepository = reportConfigSearchRepository;
+    public ReportConfigResource(ReportConfigService reportConfigService) {
+        this.reportConfigService = reportConfigService;
     }
 
     /**
      * {@code POST  /report-configs} : Create a new reportConfig.
      *
-     * @param reportConfig the reportConfig to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new reportConfig, or with status {@code 400 (Bad Request)} if the reportConfig has already an ID.
+     * @param reportConfigDTO the reportConfigDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new reportConfigDTO, or with status {@code 400 (Bad Request)} if the reportConfig has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/report-configs")
-    public ResponseEntity<ReportConfig> createReportConfig(@Valid @RequestBody ReportConfig reportConfig) throws URISyntaxException {
-        log.debug("REST request to save ReportConfig : {}", reportConfig);
-        if (reportConfig.getId() != null) {
+    public ResponseEntity<ReportConfigDTO> createReportConfig(@Valid @RequestBody ReportConfigDTO reportConfigDTO) throws URISyntaxException {
+        log.debug("REST request to save ReportConfig : {}", reportConfigDTO);
+        if (reportConfigDTO.getId() != null) {
             throw new BadRequestAlertException("A new reportConfig cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ReportConfig result = reportConfigRepository.save(reportConfig);
-        reportConfigSearchRepository.save(result);
+        ReportConfigDTO result = reportConfigService.save(reportConfigDTO);
         return ResponseEntity.created(new URI("/api/report-configs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -77,22 +69,21 @@ public class ReportConfigResource {
     /**
      * {@code PUT  /report-configs} : Updates an existing reportConfig.
      *
-     * @param reportConfig the reportConfig to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reportConfig,
-     * or with status {@code 400 (Bad Request)} if the reportConfig is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the reportConfig couldn't be updated.
+     * @param reportConfigDTO the reportConfigDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reportConfigDTO,
+     * or with status {@code 400 (Bad Request)} if the reportConfigDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reportConfigDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/report-configs")
-    public ResponseEntity<ReportConfig> updateReportConfig(@Valid @RequestBody ReportConfig reportConfig) throws URISyntaxException {
-        log.debug("REST request to update ReportConfig : {}", reportConfig);
-        if (reportConfig.getId() == null) {
+    public ResponseEntity<ReportConfigDTO> updateReportConfig(@Valid @RequestBody ReportConfigDTO reportConfigDTO) throws URISyntaxException {
+        log.debug("REST request to update ReportConfig : {}", reportConfigDTO);
+        if (reportConfigDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        ReportConfig result = reportConfigRepository.save(reportConfig);
-        reportConfigSearchRepository.save(result);
+        ReportConfigDTO result = reportConfigService.save(reportConfigDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reportConfig.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reportConfigDTO.getId().toString()))
             .body(result);
     }
 
@@ -103,9 +94,9 @@ public class ReportConfigResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reportConfigs in body.
      */
     @GetMapping("/report-configs")
-    public ResponseEntity<List<ReportConfig>> getAllReportConfigs(Pageable pageable) {
+    public ResponseEntity<List<ReportConfigDTO>> getAllReportConfigs(Pageable pageable) {
         log.debug("REST request to get a page of ReportConfigs");
-        Page<ReportConfig> page = reportConfigRepository.findAll(pageable);
+        Page<ReportConfigDTO> page = reportConfigService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -113,27 +104,26 @@ public class ReportConfigResource {
     /**
      * {@code GET  /report-configs/:id} : get the "id" reportConfig.
      *
-     * @param id the id of the reportConfig to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reportConfig, or with status {@code 404 (Not Found)}.
+     * @param id the id of the reportConfigDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reportConfigDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/report-configs/{id}")
-    public ResponseEntity<ReportConfig> getReportConfig(@PathVariable Long id) {
+    public ResponseEntity<ReportConfigDTO> getReportConfig(@PathVariable Long id) {
         log.debug("REST request to get ReportConfig : {}", id);
-        Optional<ReportConfig> reportConfig = reportConfigRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(reportConfig);
+        Optional<ReportConfigDTO> reportConfigDTO = reportConfigService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(reportConfigDTO);
     }
 
     /**
      * {@code DELETE  /report-configs/:id} : delete the "id" reportConfig.
      *
-     * @param id the id of the reportConfig to delete.
+     * @param id the id of the reportConfigDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/report-configs/{id}")
     public ResponseEntity<Void> deleteReportConfig(@PathVariable Long id) {
         log.debug("REST request to delete ReportConfig : {}", id);
-        reportConfigRepository.deleteById(id);
-        reportConfigSearchRepository.deleteById(id);
+        reportConfigService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
@@ -146,9 +136,9 @@ public class ReportConfigResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/report-configs")
-    public ResponseEntity<List<ReportConfig>> searchReportConfigs(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<ReportConfigDTO>> searchReportConfigs(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of ReportConfigs for query {}", query);
-        Page<ReportConfig> page = reportConfigSearchRepository.search(queryStringQuery(query), pageable);
+        Page<ReportConfigDTO> page = reportConfigService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
         }

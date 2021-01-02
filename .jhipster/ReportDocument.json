@@ -1,0 +1,54 @@
+{
+  "name": "ReportDocument",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "reportingDataSet",
+      "otherEntityRelationshipName": "reportDocument",
+      "relationshipName": "reportingDataSets"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "reportType",
+      "otherEntityRelationshipName": "reportDocument",
+      "relationshipValidateRules": "required",
+      "relationshipName": "reportType",
+      "otherEntityField": "name"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "reportConfig",
+      "otherEntityRelationshipName": "reportDocument",
+      "relationshipValidateRules": "required",
+      "relationshipName": "reportConfig",
+      "otherEntityField": "name"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "reportParameters",
+      "otherEntityRelationshipName": "reportDocument",
+      "relationshipValidateRules": "required",
+      "relationshipName": "reportParameters",
+      "otherEntityField": "name"
+    }
+  ],
+  "changelogDate": "20201114063339",
+  "entityTableName": "report_document",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "reportsfactory",
+  "applications": "*",
+  "microserviceName": "reportsfactory"
+}

@@ -1,0 +1,36 @@
+{
+  "name": "ReportingDataSet",
+  "fields": [
+    {
+      "fieldName": "dataName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dataSet",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "reportDocument",
+      "otherEntityRelationshipName": "reportingDataSets",
+      "relationshipName": "reportDocument",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201116024722",
+  "entityTableName": "reporting_data_set",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "reportsfactory",
+  "applications": "*",
+  "microserviceName": "reportsfactory"
+}

@@ -13,10 +13,10 @@ import java.io.OutputStream;
 
 import com.ec.proharvest.config.report.error.WrongParametersException;
 import com.ec.proharvest.domain.CsvReportConfig;
+import com.ec.proharvest.domain.HtmlReportConfig;
 import com.ec.proharvest.domain.PdfReportConfig;
 import com.ec.proharvest.domain.ReportConfig;
 import com.ec.proharvest.domain.ReportExportConfig;
-import com.ec.proharvest.domain.ReportFile;
 import com.ec.proharvest.domain.XlsxReportConfig;
 
 import org.slf4j.Logger;
@@ -45,6 +45,19 @@ public class ReportExporter {
         exportConfig.setMetadataAuthor(reportConfig.getAuthor());
         exportConfig.setEncrypted(pdfReportConfig.getEncrypted());
         exportConfig.setAllowedPermissionsHint(pdfReportConfig.getAllowedPermissionsHint());
+        exportConfig.set128BitKey(pdfReportConfig.getIs128BitKey());
+        exportConfig.setCompressed(pdfReportConfig.getIsCompressed());
+        exportConfig.setCreatingBatchModeBookmarks(pdfReportConfig.getIsCreatingBatchModeBookmarks());
+        exportConfig.setDisplayMetadataTitle(pdfReportConfig.getDisplayMetadataTitle());
+        exportConfig.setMetadataCreator(pdfReportConfig.getMetadataCreator());
+        exportConfig.setMetadataKeywords(pdfReportConfig.getMetadataKeywords());
+        exportConfig.setMetadataSubject(pdfReportConfig.getMetadataSubject());
+        exportConfig.setMetadataTitle(pdfReportConfig.getMetadataTitle());
+        exportConfig.setOwnerPassword(pdfReportConfig.getOwnerPassword());
+        // May be usefull to use setPdfJavaScript for advanced PDF functionnalities
+        exportConfig.setTagLanguage(pdfReportConfig.getTagLanguage());
+        exportConfig.setTagged(pdfReportConfig.getIsTagged());
+        exportConfig.setUserPassword(pdfReportConfig.getUserPassword());
 
         exporter.setConfiguration(simplePdfConfig);
         exporter.setConfiguration(exportConfig);
@@ -102,12 +115,29 @@ public class ReportExporter {
         }
     }
 
-    public void exportToHtml(JasperPrint jasperPrint,  OutputStream fileOutputStream) throws JRException {
-        HtmlExporter exporter = new HtmlExporter();
+    public void exportToHtml(JasperPrint jasperPrint,  OutputStream fileOutputStream, ReportConfig reportConfig) throws JRException {
+        this.checkExporterClass(reportConfig, HtmlReportConfig.class);
+        HtmlReportConfig htmlReportConfig = (HtmlReportConfig) reportConfig.getReportExportConfig();
 
+        HtmlExporter exporter = new HtmlExporter();
         exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
         exporter.setExporterOutput(new SimpleHtmlExporterOutput(fileOutputStream));
-
+        
+        SimpleHtmlReportConfiguration simpleHtmlConfig = new SimpleHtmlReportConfiguration();
+        simpleHtmlConfig.setConvertSvgToImage(htmlReportConfig.getConvertSvgToImage());
+        simpleHtmlConfig.setEmbedImage(htmlReportConfig.getEmbedImage());
+        simpleHtmlConfig.setStartPageIndex(htmlReportConfig.getStartPageIndex());
+        simpleHtmlConfig.setEndPageIndex(htmlReportConfig.getEndPageIndex());
+        simpleHtmlConfig.setIgnoreHyperlink(htmlReportConfig.getIgnoreHyperlink());
+        simpleHtmlConfig.setIgnorePageMargins(htmlReportConfig.getIgnorePageMargins());
+        simpleHtmlConfig.setOffsetX(htmlReportConfig.getOffsetX());
+        simpleHtmlConfig.setOffsetY(htmlReportConfig.getOffsetY());
+        simpleHtmlConfig.setRemoveEmptySpaceBetweenRows(htmlReportConfig.getRemoveEmptySpaceBetweenRows());
+        simpleHtmlConfig.setUseBackgroundImageToAlign(htmlReportConfig.getUseBackgroundImageToAlign());
+        simpleHtmlConfig.setWhitePageBackground(htmlReportConfig.getWhitePageBackground());
+        simpleHtmlConfig.setZoomRatio(htmlReportConfig.getZoomRatio());        
+        exporter.setConfiguration(simpleHtmlConfig);
+        
         try {
             exporter.exportReport();
         } catch (JRException ex) {

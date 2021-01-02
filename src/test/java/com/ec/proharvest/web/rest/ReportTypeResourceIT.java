@@ -5,6 +5,9 @@ import com.ec.proharvest.config.TestSecurityConfiguration;
 import com.ec.proharvest.domain.ReportType;
 import com.ec.proharvest.repository.ReportTypeRepository;
 import com.ec.proharvest.repository.search.ReportTypeSearchRepository;
+import com.ec.proharvest.service.ReportTypeService;
+import com.ec.proharvest.service.dto.ReportTypeDTO;
+import com.ec.proharvest.service.mapper.ReportTypeMapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +52,12 @@ public class ReportTypeResourceIT {
 
     @Autowired
     private ReportTypeRepository reportTypeRepository;
+
+    @Autowired
+    private ReportTypeMapper reportTypeMapper;
+
+    @Autowired
+    private ReportTypeService reportTypeService;
 
     /**
      * This repository is mocked in the com.ec.proharvest.repository.search test package.
@@ -101,9 +110,10 @@ public class ReportTypeResourceIT {
     public void createReportType() throws Exception {
         int databaseSizeBeforeCreate = reportTypeRepository.findAll().size();
         // Create the ReportType
+        ReportTypeDTO reportTypeDTO = reportTypeMapper.toDto(reportType);
         restReportTypeMockMvc.perform(post("/api/report-types").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(reportType)))
+            .content(TestUtil.convertObjectToJsonBytes(reportTypeDTO)))
             .andExpect(status().isCreated());
 
         // Validate the ReportType in the database
@@ -124,11 +134,12 @@ public class ReportTypeResourceIT {
 
         // Create the ReportType with an existing ID
         reportType.setId(1L);
+        ReportTypeDTO reportTypeDTO = reportTypeMapper.toDto(reportType);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restReportTypeMockMvc.perform(post("/api/report-types").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(reportType)))
+            .content(TestUtil.convertObjectToJsonBytes(reportTypeDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the ReportType in the database
@@ -148,11 +159,12 @@ public class ReportTypeResourceIT {
         reportType.setName(null);
 
         // Create the ReportType, which fails.
+        ReportTypeDTO reportTypeDTO = reportTypeMapper.toDto(reportType);
 
 
         restReportTypeMockMvc.perform(post("/api/report-types").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(reportType)))
+            .content(TestUtil.convertObjectToJsonBytes(reportTypeDTO)))
             .andExpect(status().isBadRequest());
 
         List<ReportType> reportTypeList = reportTypeRepository.findAll();
@@ -211,10 +223,11 @@ public class ReportTypeResourceIT {
         updatedReportType
             .name(UPDATED_NAME)
             .templateName(UPDATED_TEMPLATE_NAME);
+        ReportTypeDTO reportTypeDTO = reportTypeMapper.toDto(updatedReportType);
 
         restReportTypeMockMvc.perform(put("/api/report-types").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedReportType)))
+            .content(TestUtil.convertObjectToJsonBytes(reportTypeDTO)))
             .andExpect(status().isOk());
 
         // Validate the ReportType in the database
@@ -233,10 +246,13 @@ public class ReportTypeResourceIT {
     public void updateNonExistingReportType() throws Exception {
         int databaseSizeBeforeUpdate = reportTypeRepository.findAll().size();
 
+        // Create the ReportType
+        ReportTypeDTO reportTypeDTO = reportTypeMapper.toDto(reportType);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restReportTypeMockMvc.perform(put("/api/report-types").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(reportType)))
+            .content(TestUtil.convertObjectToJsonBytes(reportTypeDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the ReportType in the database

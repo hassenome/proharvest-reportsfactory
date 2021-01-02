@@ -1,0 +1,78 @@
+{
+  "name": "ReportConfig",
+  "fields": [
+    {
+      "fieldName": "fileType",
+      "fieldType": "FileType",
+      "fieldValues": "PDF,HTML,XLSX,CSV",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "storageType",
+      "fieldType": "StorageType",
+      "fieldValues": "OP,S3,Azure"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "prefix",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "suffix",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "author",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "allowedPermissionsHint",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sizePageToContent",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "ignoreHyperlink",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "forceLineBreakPolicy",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "isCompressed",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "encrypted",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "ownerPassword",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "userPassword",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20201116024422",
+  "entityTableName": "report_config",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "reportsfactory",
+  "applications": "*",
+  "microserviceName": "reportsfactory"
+}

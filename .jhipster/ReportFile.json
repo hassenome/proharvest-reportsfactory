@@ -1,0 +1,45 @@
+{
+  "name": "ReportFile",
+  "fields": [
+    {
+      "fieldName": "fileName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "created",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "modified",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "path",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "reportDocument",
+      "otherEntityRelationshipName": "reportFile",
+      "relationshipValidateRules": "required",
+      "relationshipName": "reportDocument",
+      "otherEntityField": "name"
+    }
+  ],
+  "changelogDate": "20201116024122",
+  "entityTableName": "report_file",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "reportsfactory",
+  "applications": "*",
+  "microserviceName": "reportsfactory"
+}

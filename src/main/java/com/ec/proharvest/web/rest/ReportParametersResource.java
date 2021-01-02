@@ -1,9 +1,8 @@
 package com.ec.proharvest.web.rest;
 
-import com.ec.proharvest.domain.ReportParameters;
-import com.ec.proharvest.repository.ReportParametersRepository;
-import com.ec.proharvest.repository.search.ReportParametersSearchRepository;
+import com.ec.proharvest.service.ReportParametersService;
 import com.ec.proharvest.web.rest.errors.BadRequestAlertException;
+import com.ec.proharvest.service.dto.ReportParametersDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -29,7 +26,6 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class ReportParametersResource {
 
     private final Logger log = LoggerFactory.getLogger(ReportParametersResource.class);
@@ -39,30 +35,26 @@ public class ReportParametersResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final ReportParametersRepository reportParametersRepository;
+    private final ReportParametersService reportParametersService;
 
-    private final ReportParametersSearchRepository reportParametersSearchRepository;
-
-    public ReportParametersResource(ReportParametersRepository reportParametersRepository, ReportParametersSearchRepository reportParametersSearchRepository) {
-        this.reportParametersRepository = reportParametersRepository;
-        this.reportParametersSearchRepository = reportParametersSearchRepository;
+    public ReportParametersResource(ReportParametersService reportParametersService) {
+        this.reportParametersService = reportParametersService;
     }
 
     /**
      * {@code POST  /report-parameters} : Create a new reportParameters.
      *
-     * @param reportParameters the reportParameters to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new reportParameters, or with status {@code 400 (Bad Request)} if the reportParameters has already an ID.
+     * @param reportParametersDTO the reportParametersDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new reportParametersDTO, or with status {@code 400 (Bad Request)} if the reportParameters has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/report-parameters")
-    public ResponseEntity<ReportParameters> createReportParameters(@Valid @RequestBody ReportParameters reportParameters) throws URISyntaxException {
-        log.debug("REST request to save ReportParameters : {}", reportParameters);
-        if (reportParameters.getId() != null) {
+    public ResponseEntity<ReportParametersDTO> createReportParameters(@Valid @RequestBody ReportParametersDTO reportParametersDTO) throws URISyntaxException {
+        log.debug("REST request to save ReportParameters : {}", reportParametersDTO);
+        if (reportParametersDTO.getId() != null) {
             throw new BadRequestAlertException("A new reportParameters cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ReportParameters result = reportParametersRepository.save(reportParameters);
-        reportParametersSearchRepository.save(result);
+        ReportParametersDTO result = reportParametersService.save(reportParametersDTO);
         return ResponseEntity.created(new URI("/api/report-parameters/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -71,22 +63,21 @@ public class ReportParametersResource {
     /**
      * {@code PUT  /report-parameters} : Updates an existing reportParameters.
      *
-     * @param reportParameters the reportParameters to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reportParameters,
-     * or with status {@code 400 (Bad Request)} if the reportParameters is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the reportParameters couldn't be updated.
+     * @param reportParametersDTO the reportParametersDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reportParametersDTO,
+     * or with status {@code 400 (Bad Request)} if the reportParametersDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reportParametersDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/report-parameters")
-    public ResponseEntity<ReportParameters> updateReportParameters(@Valid @RequestBody ReportParameters reportParameters) throws URISyntaxException {
-        log.debug("REST request to update ReportParameters : {}", reportParameters);
-        if (reportParameters.getId() == null) {
+    public ResponseEntity<ReportParametersDTO> updateReportParameters(@Valid @RequestBody ReportParametersDTO reportParametersDTO) throws URISyntaxException {
+        log.debug("REST request to update ReportParameters : {}", reportParametersDTO);
+        if (reportParametersDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        ReportParameters result = reportParametersRepository.save(reportParameters);
-        reportParametersSearchRepository.save(result);
+        ReportParametersDTO result = reportParametersService.save(reportParametersDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reportParameters.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reportParametersDTO.getId().toString()))
             .body(result);
     }
 
@@ -96,35 +87,34 @@ public class ReportParametersResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reportParameters in body.
      */
     @GetMapping("/report-parameters")
-    public List<ReportParameters> getAllReportParameters() {
+    public List<ReportParametersDTO> getAllReportParameters() {
         log.debug("REST request to get all ReportParameters");
-        return reportParametersRepository.findAll();
+        return reportParametersService.findAll();
     }
 
     /**
      * {@code GET  /report-parameters/:id} : get the "id" reportParameters.
      *
-     * @param id the id of the reportParameters to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reportParameters, or with status {@code 404 (Not Found)}.
+     * @param id the id of the reportParametersDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reportParametersDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/report-parameters/{id}")
-    public ResponseEntity<ReportParameters> getReportParameters(@PathVariable Long id) {
+    public ResponseEntity<ReportParametersDTO> getReportParameters(@PathVariable Long id) {
         log.debug("REST request to get ReportParameters : {}", id);
-        Optional<ReportParameters> reportParameters = reportParametersRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(reportParameters);
+        Optional<ReportParametersDTO> reportParametersDTO = reportParametersService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(reportParametersDTO);
     }
 
     /**
      * {@code DELETE  /report-parameters/:id} : delete the "id" reportParameters.
      *
-     * @param id the id of the reportParameters to delete.
+     * @param id the id of the reportParametersDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/report-parameters/{id}")
     public ResponseEntity<Void> deleteReportParameters(@PathVariable Long id) {
         log.debug("REST request to delete ReportParameters : {}", id);
-        reportParametersRepository.deleteById(id);
-        reportParametersSearchRepository.deleteById(id);
+        reportParametersService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
@@ -136,10 +126,8 @@ public class ReportParametersResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/report-parameters")
-    public List<ReportParameters> searchReportParameters(@RequestParam String query) {
+    public List<ReportParametersDTO> searchReportParameters(@RequestParam String query) {
         log.debug("REST request to search ReportParameters for query {}", query);
-        return StreamSupport
-            .stream(reportParametersSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-        .collect(Collectors.toList());
+        return reportParametersService.search(query);
     }
 }

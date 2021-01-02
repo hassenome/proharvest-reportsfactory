@@ -88,8 +88,16 @@ public class OnPremiseReporting extends ReportsManager {
                     break;
 
                 case HTML:
-                    reportExporter.exportToHtml(jspPrint, reportOutputStream);
+                    reportExporter.exportToHtml(jspPrint, reportOutputStream, reportDocument.getReportConfig());
                     break;
+
+                case XLSX:
+                    reportExporter.exportToXlsx(jspPrint, reportOutputStream, reportDocument.getReportConfig());
+                    break;
+                    
+                case CSV:
+                    reportExporter.exportToCsv(jspPrint, reportOutputStream, reportDocument.getReportConfig());
+                    break;                    
 
                 default:
                     throw new InvalidFileTypeException("Unhadled file type " + reportDocument.getReportConfig().getFileType());
