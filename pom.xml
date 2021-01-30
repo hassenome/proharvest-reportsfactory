@@ -228,6 +228,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
+        <!-- spring batch dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-test</artifactId>
+			<scope>test</scope>
+		</dependency>        
         <!-- Spring Data Jest dependencies for Elasticsearch -->
         <dependency>
             <groupId>com.github.vanroy</groupId>
@@ -659,7 +669,7 @@
                         <changeLogFile>${project.basedir}/src/main/resources/config/liquibase/master.xml</changeLogFile>
                         <diffChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
                         <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://192.168.2.17:5432/reportsfactory</url>
+                        <url>jdbc:postgresql://192.168.99.100:5432/reportsfactory</url>
                         <defaultSchemaName></defaultSchemaName>
                         <username>proharvest_boot</username>
                         <password>boot</password>

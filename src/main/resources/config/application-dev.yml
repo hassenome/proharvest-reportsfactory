@@ -31,6 +31,9 @@ spring:
       - swagger
       # Uncomment to activate TLS for the dev profile
       #- tls
+  batch:
+    job:
+      enabled: false
   devtools:
     restart:
       enabled: true
@@ -44,11 +47,11 @@ spring:
     consul:
       discovery:
         prefer-ip-address: true
-      host: localhost
+      host: 192.168.99.100
       port: 8500
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://192.168.2.17:5432/reportsfactory
+    url: jdbc:postgresql://192.168.99.100:5432/reportsfactory
     username: proharvest_boot
     password: boot
     hikari:
@@ -59,11 +62,11 @@ spring:
     show-sql: true
   data:
     jest:
-      uri: http://localhost:9200
+      uri: http://192.168.99.100:9200
   # see https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-connecting-to-elasticsearch-jest
   elasticsearch:
     rest:
-      uris: http://localhost:9200
+      uris: http://192.168.99.100:9200
   liquibase:
     # Add 'faker' if you want to load some sample data automatically    
     contexts: dev

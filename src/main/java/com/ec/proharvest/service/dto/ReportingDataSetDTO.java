@@ -1,6 +1,9 @@
 package com.ec.proharvest.service.dto;
 
 import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
+
 import java.io.Serializable;
 
 /**
@@ -14,7 +17,7 @@ public class ReportingDataSetDTO implements Serializable {
     private String dataName;
 
     @NotNull
-    private String dataSet;
+    private BaseJsonNode dataSet;
 
 
     private Long reportDocumentId;
@@ -35,11 +38,11 @@ public class ReportingDataSetDTO implements Serializable {
         this.dataName = dataName;
     }
 
-    public String getDataSet() {
+    public BaseJsonNode getDataSet() {
         return dataSet;
     }
 
-    public void setDataSet(String dataSet) {
+    public void setDataSet(BaseJsonNode dataSet) {
         this.dataSet = dataSet;
     }
 

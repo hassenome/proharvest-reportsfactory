@@ -147,8 +147,8 @@ public class ReportExporter {
     }
 
     private void checkExporterClass(ReportConfig reportConfig, Class<? extends ReportExportConfig> c) {
-        if (!(reportConfig.getReportExportConfig().getClass().isInstance(c))) { 
-            throw new WrongParametersException("Expected field reportExportConfig to be of type" + PdfReportConfig.class + " , got " + reportConfig.getReportExportConfig().getClass() + " instead");
+        if (!(reportConfig.getReportExportConfig().getClass().equals(c))) { 
+            throw new WrongParametersException("Expected field reportExportConfig to be of type " + c + ", got " + reportConfig.getReportExportConfig().getClass() + " instead");
           }
     }    
 

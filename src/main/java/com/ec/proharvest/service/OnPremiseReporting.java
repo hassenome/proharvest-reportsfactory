@@ -38,13 +38,12 @@ public class OnPremiseReporting extends ReportsManager {
 
     // private final PersistenceAuditEventRepository persistenceAuditEventRepository;
 
-    // private final ReportingDataRepository reportingDataRepository;
     private final ReportDocumentRepository reportDocumentRepository;
 
     // TODO: export these to properties
-    private static final String TEMPLATES_INPUT_STREAM = "file:/var/lib/proharvest/reportsfactory/templates/";
-    private static final String COMPILED_REPORTS_OUTPUT_PATH = "/var/lib/proharvest/reportsfactory/templates/";
-    private static final String GENERATED_REPORTS_OUTPUT_PATH = "/var/lib/proharvest/reportsfactory/output/";
+    private static final String TEMPLATES_INPUT_STREAM = "file:C:/workshop/templates/";
+    private static final String COMPILED_REPORTS_OUTPUT_PATH = "C:/workshop/templates/";
+    private static final String GENERATED_REPORTS_OUTPUT_PATH = "C:/workshop/output/";
 
     private final Logger log = LoggerFactory.getLogger(OnPremiseReporting.class);
 
@@ -107,6 +106,7 @@ public class OnPremiseReporting extends ReportsManager {
             throw ex;
         } finally{
             reportOutputStream.close();
+            // TODO: close all input streams
         }
     }
 

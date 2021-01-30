@@ -20,6 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.google.common.net.HttpHeaders;
 
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +54,13 @@ public class ReportResource {
     @Autowired
     ReportingDataSetRepository reportingDataSetRepository;
 
+    // TODO: for test only, remove these, then later remove the entier class
+    @Autowired
+    JobLauncher jobLauncher;
+     
+    @Autowired
+    Job job;
+
     private final OnPremiseReporting reportsManager;
 
     public ReportResource(OnPremiseReporting reportsManager) {
@@ -60,7 +71,7 @@ public class ReportResource {
     public ResponseEntity<String> compileReport() {
         try {
             // this.createData();
-            ReportDocument rptDoc = this.reportDocumentRepository.findByName("example").get(0);
+            ReportDocument rptDoc = this.reportDocumentRepository.findByName("EC").get(0);
             this.reportsManager.compileReportTemplate(rptDoc);
             // HttpHeaders headers =
             // PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(),
@@ -74,7 +85,7 @@ public class ReportResource {
     @GetMapping("/reports/generate")
     public ResponseEntity<String> generateReport() {
         try {
-            ReportDocument rptDoc = this.reportDocumentRepository.findByNameWithData("example").get(0);
+            ReportDocument rptDoc = this.reportDocumentRepository.findByNameWithData("EC").get(0);
             this.reportsManager.generateReport(rptDoc);
             // HttpHeaders headers =
             // PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(),
@@ -85,41 +96,19 @@ public class ReportResource {
         }
     }
 
-    // @PostMapping("/reports")
-    // Employee newEmployee(@RequestBody Employee newEmployee) {
-    // return repository.save(newEmployee);
-    // }
+    @GetMapping("/reports/run")
+    public ResponseEntity<String> runJob() {
+        try {
+            JobParameters params = new JobParametersBuilder()
+            .addString("JobID", String.valueOf(System.currentTimeMillis()))
+            .toJobParameters();
+            jobLauncher.run(job, params);
+            return new ResponseEntity<>("ok", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
+        }
+    }
 
-    // // Single item
-
-    // @GetMapping("/reports/{id}")
-    // Employee one(@PathVariable Long id) {
-
-    // return repository.findById(id)
-    // .orElseThrow(() -> new EmployeeNotFoundException(id));
-    // }
-
-    // @PutMapping("/reports/{id}")
-    // Employee replaceEmployee(@RequestBody Employee newEmployee, @PathVariable
-    // Long id) {
-
-    // return repository.findById(id)
-    // .map(employee -> {
-    // employee.setName(newEmployee.getName());
-    // employee.setRole(newEmployee.getRole());
-    // return repository.save(employee);
-    // })
-    // .orElseGet(() -> {
-    // newEmployee.setId(id);
-    // return repository.save(newEmployee);
-    // });
-    // }
-
-    // @DeleteMapping("/reports/{id}")
-    // void deleteEmployee(@PathVariable Long id) {
-    // repository.deleteById(id);
-    // }
-    // }
 
     private void createData() {
         PdfReportConfig pdfConfig = new PdfReportConfig();
@@ -145,7 +134,7 @@ public class ReportResource {
 
         ReportType reportType = new ReportType();
         reportType.setName("prototype");
-        reportType.setTemplateName("template_example");
+        reportType.setTemplateName("template");
 
         this.reportTypeRepository.save(reportType);
 
@@ -164,7 +153,7 @@ public class ReportResource {
         }
 
         ReportDocument testReportDocument = new ReportDocument();
-        testReportDocument.setName("example");
+        testReportDocument.setName("EC");
         testReportDocument.setReportConfig(reportConf);
         testReportDocument.setReportParameters(reportparams);
         testReportDocument.setReportType(reportType);
