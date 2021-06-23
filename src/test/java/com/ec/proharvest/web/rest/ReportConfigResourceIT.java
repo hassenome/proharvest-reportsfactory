@@ -64,9 +64,6 @@ public class ReportConfigResourceIT {
     private static final String DEFAULT_AUTHOR = "AAAAAAAAAA";
     private static final String UPDATED_AUTHOR = "BBBBBBBBBB";
 
-    private static final String DEFAULT_ALLOWED_PERMISSIONS_HINT = "AAAAAAAAAA";
-    private static final String UPDATED_ALLOWED_PERMISSIONS_HINT = "BBBBBBBBBB";
-
     private static final Boolean DEFAULT_SIZE_PAGE_TO_CONTENT = false;
     private static final Boolean UPDATED_SIZE_PAGE_TO_CONTENT = true;
 
@@ -126,15 +123,7 @@ public class ReportConfigResourceIT {
             .name(DEFAULT_NAME)
             .prefix(DEFAULT_PREFIX)
             .suffix(DEFAULT_SUFFIX)
-            .author(DEFAULT_AUTHOR)
-            .allowedPermissionsHint(DEFAULT_ALLOWED_PERMISSIONS_HINT)
-            .sizePageToContent(DEFAULT_SIZE_PAGE_TO_CONTENT)
-            .ignoreHyperlink(DEFAULT_IGNORE_HYPERLINK)
-            .forceLineBreakPolicy(DEFAULT_FORCE_LINE_BREAK_POLICY)
-            .isCompressed(DEFAULT_IS_COMPRESSED)
-            .encrypted(DEFAULT_ENCRYPTED)
-            .ownerPassword(DEFAULT_OWNER_PASSWORD)
-            .userPassword(DEFAULT_USER_PASSWORD);
+            .author(DEFAULT_AUTHOR);
         return reportConfig;
     }
     /**
@@ -150,15 +139,7 @@ public class ReportConfigResourceIT {
             .name(UPDATED_NAME)
             .prefix(UPDATED_PREFIX)
             .suffix(UPDATED_SUFFIX)
-            .author(UPDATED_AUTHOR)
-            .allowedPermissionsHint(UPDATED_ALLOWED_PERMISSIONS_HINT)
-            .sizePageToContent(UPDATED_SIZE_PAGE_TO_CONTENT)
-            .ignoreHyperlink(UPDATED_IGNORE_HYPERLINK)
-            .forceLineBreakPolicy(UPDATED_FORCE_LINE_BREAK_POLICY)
-            .isCompressed(UPDATED_IS_COMPRESSED)
-            .encrypted(UPDATED_ENCRYPTED)
-            .ownerPassword(UPDATED_OWNER_PASSWORD)
-            .userPassword(UPDATED_USER_PASSWORD);
+            .author(UPDATED_AUTHOR);
         return reportConfig;
     }
 
@@ -188,15 +169,6 @@ public class ReportConfigResourceIT {
         assertThat(testReportConfig.getPrefix()).isEqualTo(DEFAULT_PREFIX);
         assertThat(testReportConfig.getSuffix()).isEqualTo(DEFAULT_SUFFIX);
         assertThat(testReportConfig.getAuthor()).isEqualTo(DEFAULT_AUTHOR);
-        assertThat(testReportConfig.getAllowedPermissionsHint()).isEqualTo(DEFAULT_ALLOWED_PERMISSIONS_HINT);
-        assertThat(testReportConfig.isSizePageToContent()).isEqualTo(DEFAULT_SIZE_PAGE_TO_CONTENT);
-        assertThat(testReportConfig.isIgnoreHyperlink()).isEqualTo(DEFAULT_IGNORE_HYPERLINK);
-        assertThat(testReportConfig.isForceLineBreakPolicy()).isEqualTo(DEFAULT_FORCE_LINE_BREAK_POLICY);
-        assertThat(testReportConfig.isIsCompressed()).isEqualTo(DEFAULT_IS_COMPRESSED);
-        assertThat(testReportConfig.isEncrypted()).isEqualTo(DEFAULT_ENCRYPTED);
-        assertThat(testReportConfig.getOwnerPassword()).isEqualTo(DEFAULT_OWNER_PASSWORD);
-        assertThat(testReportConfig.getUserPassword()).isEqualTo(DEFAULT_USER_PASSWORD);
-
         // Validate the ReportConfig in Elasticsearch
         verify(mockReportConfigSearchRepository, times(1)).save(testReportConfig);
     }
@@ -281,15 +253,7 @@ public class ReportConfigResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].prefix").value(hasItem(DEFAULT_PREFIX)))
             .andExpect(jsonPath("$.[*].suffix").value(hasItem(DEFAULT_SUFFIX)))
-            .andExpect(jsonPath("$.[*].author").value(hasItem(DEFAULT_AUTHOR)))
-            .andExpect(jsonPath("$.[*].allowedPermissionsHint").value(hasItem(DEFAULT_ALLOWED_PERMISSIONS_HINT)))
-            .andExpect(jsonPath("$.[*].sizePageToContent").value(hasItem(DEFAULT_SIZE_PAGE_TO_CONTENT.booleanValue())))
-            .andExpect(jsonPath("$.[*].ignoreHyperlink").value(hasItem(DEFAULT_IGNORE_HYPERLINK.booleanValue())))
-            .andExpect(jsonPath("$.[*].forceLineBreakPolicy").value(hasItem(DEFAULT_FORCE_LINE_BREAK_POLICY.booleanValue())))
-            .andExpect(jsonPath("$.[*].isCompressed").value(hasItem(DEFAULT_IS_COMPRESSED.booleanValue())))
-            .andExpect(jsonPath("$.[*].encrypted").value(hasItem(DEFAULT_ENCRYPTED.booleanValue())))
-            .andExpect(jsonPath("$.[*].ownerPassword").value(hasItem(DEFAULT_OWNER_PASSWORD)))
-            .andExpect(jsonPath("$.[*].userPassword").value(hasItem(DEFAULT_USER_PASSWORD)));
+            .andExpect(jsonPath("$.[*].author").value(hasItem(DEFAULT_AUTHOR)));
     }
     
     @Test
@@ -308,15 +272,7 @@ public class ReportConfigResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.prefix").value(DEFAULT_PREFIX))
             .andExpect(jsonPath("$.suffix").value(DEFAULT_SUFFIX))
-            .andExpect(jsonPath("$.author").value(DEFAULT_AUTHOR))
-            .andExpect(jsonPath("$.allowedPermissionsHint").value(DEFAULT_ALLOWED_PERMISSIONS_HINT))
-            .andExpect(jsonPath("$.sizePageToContent").value(DEFAULT_SIZE_PAGE_TO_CONTENT.booleanValue()))
-            .andExpect(jsonPath("$.ignoreHyperlink").value(DEFAULT_IGNORE_HYPERLINK.booleanValue()))
-            .andExpect(jsonPath("$.forceLineBreakPolicy").value(DEFAULT_FORCE_LINE_BREAK_POLICY.booleanValue()))
-            .andExpect(jsonPath("$.isCompressed").value(DEFAULT_IS_COMPRESSED.booleanValue()))
-            .andExpect(jsonPath("$.encrypted").value(DEFAULT_ENCRYPTED.booleanValue()))
-            .andExpect(jsonPath("$.ownerPassword").value(DEFAULT_OWNER_PASSWORD))
-            .andExpect(jsonPath("$.userPassword").value(DEFAULT_USER_PASSWORD));
+            .andExpect(jsonPath("$.author").value(DEFAULT_AUTHOR));
     }
     @Test
     @Transactional
@@ -344,15 +300,7 @@ public class ReportConfigResourceIT {
             .name(UPDATED_NAME)
             .prefix(UPDATED_PREFIX)
             .suffix(UPDATED_SUFFIX)
-            .author(UPDATED_AUTHOR)
-            .allowedPermissionsHint(UPDATED_ALLOWED_PERMISSIONS_HINT)
-            .sizePageToContent(UPDATED_SIZE_PAGE_TO_CONTENT)
-            .ignoreHyperlink(UPDATED_IGNORE_HYPERLINK)
-            .forceLineBreakPolicy(UPDATED_FORCE_LINE_BREAK_POLICY)
-            .isCompressed(UPDATED_IS_COMPRESSED)
-            .encrypted(UPDATED_ENCRYPTED)
-            .ownerPassword(UPDATED_OWNER_PASSWORD)
-            .userPassword(UPDATED_USER_PASSWORD);
+            .author(UPDATED_AUTHOR);
         ReportConfigDTO reportConfigDTO = reportConfigMapper.toDto(updatedReportConfig);
 
         restReportConfigMockMvc.perform(put("/api/report-configs").with(csrf())
@@ -370,14 +318,6 @@ public class ReportConfigResourceIT {
         assertThat(testReportConfig.getPrefix()).isEqualTo(UPDATED_PREFIX);
         assertThat(testReportConfig.getSuffix()).isEqualTo(UPDATED_SUFFIX);
         assertThat(testReportConfig.getAuthor()).isEqualTo(UPDATED_AUTHOR);
-        assertThat(testReportConfig.getAllowedPermissionsHint()).isEqualTo(UPDATED_ALLOWED_PERMISSIONS_HINT);
-        assertThat(testReportConfig.isSizePageToContent()).isEqualTo(UPDATED_SIZE_PAGE_TO_CONTENT);
-        assertThat(testReportConfig.isIgnoreHyperlink()).isEqualTo(UPDATED_IGNORE_HYPERLINK);
-        assertThat(testReportConfig.isForceLineBreakPolicy()).isEqualTo(UPDATED_FORCE_LINE_BREAK_POLICY);
-        assertThat(testReportConfig.isIsCompressed()).isEqualTo(UPDATED_IS_COMPRESSED);
-        assertThat(testReportConfig.isEncrypted()).isEqualTo(UPDATED_ENCRYPTED);
-        assertThat(testReportConfig.getOwnerPassword()).isEqualTo(UPDATED_OWNER_PASSWORD);
-        assertThat(testReportConfig.getUserPassword()).isEqualTo(UPDATED_USER_PASSWORD);
 
         // Validate the ReportConfig in Elasticsearch
         verify(mockReportConfigSearchRepository, times(1)).save(testReportConfig);
@@ -445,14 +385,6 @@ public class ReportConfigResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].prefix").value(hasItem(DEFAULT_PREFIX)))
             .andExpect(jsonPath("$.[*].suffix").value(hasItem(DEFAULT_SUFFIX)))
-            .andExpect(jsonPath("$.[*].author").value(hasItem(DEFAULT_AUTHOR)))
-            .andExpect(jsonPath("$.[*].allowedPermissionsHint").value(hasItem(DEFAULT_ALLOWED_PERMISSIONS_HINT)))
-            .andExpect(jsonPath("$.[*].sizePageToContent").value(hasItem(DEFAULT_SIZE_PAGE_TO_CONTENT.booleanValue())))
-            .andExpect(jsonPath("$.[*].ignoreHyperlink").value(hasItem(DEFAULT_IGNORE_HYPERLINK.booleanValue())))
-            .andExpect(jsonPath("$.[*].forceLineBreakPolicy").value(hasItem(DEFAULT_FORCE_LINE_BREAK_POLICY.booleanValue())))
-            .andExpect(jsonPath("$.[*].isCompressed").value(hasItem(DEFAULT_IS_COMPRESSED.booleanValue())))
-            .andExpect(jsonPath("$.[*].encrypted").value(hasItem(DEFAULT_ENCRYPTED.booleanValue())))
-            .andExpect(jsonPath("$.[*].ownerPassword").value(hasItem(DEFAULT_OWNER_PASSWORD)))
-            .andExpect(jsonPath("$.[*].userPassword").value(hasItem(DEFAULT_USER_PASSWORD)));
+            .andExpect(jsonPath("$.[*].author").value(hasItem(DEFAULT_AUTHOR)));
     }
 }

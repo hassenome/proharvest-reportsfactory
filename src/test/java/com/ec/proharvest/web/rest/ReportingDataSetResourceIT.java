@@ -83,8 +83,8 @@ public class ReportingDataSetResourceIT {
      */
     public static ReportingDataSet createEntity(EntityManager em) {
         ReportingDataSet reportingDataSet = new ReportingDataSet()
-            .dataName(DEFAULT_DATA_NAME)
-            .dataSet(DEFAULT_DATA_SET);
+            .dataName(DEFAULT_DATA_NAME);
+            // .dataSet(DEFAULT_DATA_SET);
         return reportingDataSet;
     }
     /**
@@ -95,8 +95,8 @@ public class ReportingDataSetResourceIT {
      */
     public static ReportingDataSet createUpdatedEntity(EntityManager em) {
         ReportingDataSet reportingDataSet = new ReportingDataSet()
-            .dataName(UPDATED_DATA_NAME)
-            .dataSet(UPDATED_DATA_SET);
+            .dataName(UPDATED_DATA_NAME);
+            // .dataSet(UPDATED_DATA_SET);
         return reportingDataSet;
     }
 
@@ -241,8 +241,8 @@ public class ReportingDataSetResourceIT {
         // Disconnect from session so that the updates on updatedReportingDataSet are not directly saved in db
         em.detach(updatedReportingDataSet);
         updatedReportingDataSet
-            .dataName(UPDATED_DATA_NAME)
-            .dataSet(UPDATED_DATA_SET);
+            .dataName(UPDATED_DATA_NAME);
+            // .dataSet(UPDATED_DATA_SET);
         ReportingDataSetDTO reportingDataSetDTO = reportingDataSetMapper.toDto(updatedReportingDataSet);
 
         restReportingDataSetMockMvc.perform(put("/api/reporting-data-sets").with(csrf())

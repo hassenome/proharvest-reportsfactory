@@ -4,7 +4,12 @@
     {
       "fieldName": "name",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "StatusName",
+      "fieldValues": "GENERATED,UPDATED,ACTION_REQUIRED,ERROR,NEW"
     }
   ],
   "relationships": [
@@ -50,5 +55,7 @@
   "embedded": false,
   "clientRootFolder": "reportsfactory",
   "applications": "*",
-  "microserviceName": "reportsfactory"
+  "microserviceName": "reportsfactory",
+  "searchEngine": "elasticsearch",
+  "databaseType": "sql"
 }

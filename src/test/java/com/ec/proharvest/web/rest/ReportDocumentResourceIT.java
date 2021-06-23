@@ -36,6 +36,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.ec.proharvest.domain.enumeration.StatusName;
 /**
  * Integration tests for the {@link ReportDocumentResource} REST controller.
  */
@@ -47,6 +48,9 @@ public class ReportDocumentResourceIT {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
+
+    private static final StatusName DEFAULT_STATUS = StatusName.GENERATED;
+    private static final StatusName UPDATED_STATUS = StatusName.UPDATED;
 
     @Autowired
     private ReportDocumentRepository reportDocumentRepository;
@@ -81,7 +85,8 @@ public class ReportDocumentResourceIT {
      */
     public static ReportDocument createEntity(EntityManager em) {
         ReportDocument reportDocument = new ReportDocument()
-            .name(DEFAULT_NAME);
+            .name(DEFAULT_NAME)
+            .status(DEFAULT_STATUS);
         // Add required entity
         ReportType reportType;
         if (TestUtil.findAll(em, ReportType.class).isEmpty()) {
@@ -122,7 +127,8 @@ public class ReportDocumentResourceIT {
      */
     public static ReportDocument createUpdatedEntity(EntityManager em) {
         ReportDocument reportDocument = new ReportDocument()
-            .name(UPDATED_NAME);
+            .name(UPDATED_NAME)
+            .status(UPDATED_STATUS);
         // Add required entity
         ReportType reportType;
         if (TestUtil.findAll(em, ReportType.class).isEmpty()) {
@@ -177,6 +183,7 @@ public class ReportDocumentResourceIT {
         assertThat(reportDocumentList).hasSize(databaseSizeBeforeCreate + 1);
         ReportDocument testReportDocument = reportDocumentList.get(reportDocumentList.size() - 1);
         assertThat(testReportDocument.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testReportDocument.getStatus()).isEqualTo(DEFAULT_STATUS);
 
         // Validate the ReportDocument in Elasticsearch
         verify(mockReportDocumentSearchRepository, times(1)).save(testReportDocument);
@@ -237,7 +244,8 @@ public class ReportDocumentResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportDocument.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
     
     @Test
@@ -251,7 +259,8 @@ public class ReportDocumentResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(reportDocument.getId().intValue()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
     @Test
     @Transactional
@@ -274,7 +283,8 @@ public class ReportDocumentResourceIT {
         // Disconnect from session so that the updates on updatedReportDocument are not directly saved in db
         em.detach(updatedReportDocument);
         updatedReportDocument
-            .name(UPDATED_NAME);
+            .name(UPDATED_NAME)
+            .status(UPDATED_STATUS);
         ReportDocumentDTO reportDocumentDTO = reportDocumentMapper.toDto(updatedReportDocument);
 
         restReportDocumentMockMvc.perform(put("/api/report-documents").with(csrf())
@@ -287,6 +297,7 @@ public class ReportDocumentResourceIT {
         assertThat(reportDocumentList).hasSize(databaseSizeBeforeUpdate);
         ReportDocument testReportDocument = reportDocumentList.get(reportDocumentList.size() - 1);
         assertThat(testReportDocument.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testReportDocument.getStatus()).isEqualTo(UPDATED_STATUS);
 
         // Validate the ReportDocument in Elasticsearch
         verify(mockReportDocumentSearchRepository, times(1)).save(testReportDocument);
@@ -349,6 +360,7 @@ public class ReportDocumentResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportDocument.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 }

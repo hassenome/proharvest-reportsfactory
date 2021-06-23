@@ -25,6 +25,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,7 +60,12 @@ public class ReportResource {
     JobLauncher jobLauncher;
      
     @Autowired
-    Job job;
+    @Qualifier("importDataSetJob")
+    Job importDataSetJob;
+
+    @Autowired
+    @Qualifier("generateReportsJob")
+    Job generateReportsJob;
 
     private final OnPremiseReporting reportsManager;
 
@@ -102,13 +108,25 @@ public class ReportResource {
             JobParameters params = new JobParametersBuilder()
             .addString("JobID", String.valueOf(System.currentTimeMillis()))
             .toJobParameters();
-            jobLauncher.run(job, params);
+            jobLauncher.run(importDataSetJob, params);
             return new ResponseEntity<>("ok", HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
         }
     }
 
+    @GetMapping("/reports/rungen")
+    public ResponseEntity<String> runGenJob() {
+        try {
+            JobParameters params = new JobParametersBuilder()
+            .addString("JobID", String.valueOf(System.currentTimeMillis()))
+            .toJobParameters();
+            jobLauncher.run(generateReportsJob, params);
+            return new ResponseEntity<>("ok", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
+        }
+    }
 
     private void createData() {
         PdfReportConfig pdfConfig = new PdfReportConfig();

@@ -16,7 +16,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_report_document_name" />
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="true" />
             </column>
             <column name="report_type_id" type="bigint">
                 <constraints nullable="false" />
@@ -51,6 +54,7 @@
                   tableName="report_document">
             <column name="id" type="numeric"/>
             <column name="name" type="string"/>
+            <column name="status" type="string"/>
             <column name="report_type_id" type="numeric"/>
             <column name="report_config_id" type="numeric"/>
             <column name="report_parameters_id" type="numeric"/>

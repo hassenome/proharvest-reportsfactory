@@ -1,23 +1,25 @@
 package com.ec.proharvest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.ec.proharvest.domain.enumeration.StatusName;
 
 /**
  * A ReportDocument.
  */
 @Entity
 @Table(name = "report_document")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "reportdocument")
 public class ReportDocument implements Serializable {
 
@@ -29,28 +31,32 @@ public class ReportDocument implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "reportDocument")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusName status;
+
+
+    // TODO: check for missing data when selecting non cached value; perhaps this should not be cached??
+    @OneToMany(mappedBy = "reportDocument", fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<ReportingDataSet> reportingDataSets = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = "reportDocuments", allowSetters = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ReportType reportType;
 
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = "reportDocuments", allowSetters = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ReportConfig reportConfig;
 
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = "reportDocuments", allowSetters = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ReportParameters reportParameters;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -75,6 +81,19 @@ public class ReportDocument implements Serializable {
         this.name = name;
     }
 
+    public StatusName getStatus() {
+        return status;
+    }
+
+    public ReportDocument status(StatusName status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(StatusName status) {
+        this.status = status;
+    }
+
     public Set<ReportingDataSet> getReportingDataSets() {
         return reportingDataSets;
     }
@@ -84,15 +103,15 @@ public class ReportDocument implements Serializable {
         return this;
     }
 
-    public ReportDocument addReportingDataSets(ReportingDataSet reportingDataSets) {
-        this.reportingDataSets.add(reportingDataSets);
-        reportingDataSets.setReportDocument(this);
+    public ReportDocument addReportingDataSets(ReportingDataSet reportingDataSet) {
+        this.reportingDataSets.add(reportingDataSet);
+        reportingDataSet.setReportDocument(this);
         return this;
     }
 
-    public ReportDocument removeReportingDataSets(ReportingDataSet reportingDataSets) {
-        this.reportingDataSets.remove(reportingDataSets);
-        reportingDataSets.setReportDocument(null);
+    public ReportDocument removeReportingDataSets(ReportingDataSet reportingDataSet) {
+        this.reportingDataSets.remove(reportingDataSet);
+        reportingDataSet.setReportDocument(null);
         return this;
     }
 
@@ -162,7 +181,7 @@ public class ReportDocument implements Serializable {
         return "ReportDocument{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", status='" + getStatus() + "'" +
             "}";
     }
-
 }

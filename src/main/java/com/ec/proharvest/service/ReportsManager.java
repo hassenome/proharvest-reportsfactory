@@ -36,9 +36,10 @@ public abstract class ReportsManager {
             reportFile.setFileName(fileName);
         } else {
             reportFile = reportFiles.get(0);
+            reportFile.setModified(Instant.now());
         }                
         reportFile.setReportDocument(reportDocument);
-        this.reportFileRepository.save(reportFile);
+        // this.reportFileRepository.save(reportFile);
         return reportFile;
     }
 

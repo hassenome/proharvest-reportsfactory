@@ -9,7 +9,7 @@ public class ReportingDataSetProcessor implements ItemProcessor<BaseJsonNode, Re
 
     @Override
     public ReportingDataSet process(BaseJsonNode arg0) throws Exception {
-        System.out.println("processing items"); 
+        System.out.println("processing item:"); 
         System.out.println(arg0.toString());
         ReportingDataSet rpDataSet = new ReportingDataSet();
         rpDataSet.setDataName("input");

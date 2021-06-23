@@ -2,6 +2,7 @@ package com.ec.proharvest.service.dto;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import com.ec.proharvest.domain.enumeration.StatusName;
 
 /**
  * A DTO for the {@link com.ec.proharvest.domain.ReportDocument} entity.
@@ -12,6 +13,8 @@ public class ReportDocumentDTO implements Serializable {
 
     @NotNull
     private String name;
+
+    private StatusName status;
 
 
     private Long reportTypeId;
@@ -40,6 +43,14 @@ public class ReportDocumentDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public StatusName getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusName status) {
+        this.status = status;
     }
 
     public Long getReportTypeId() {
@@ -113,6 +124,7 @@ public class ReportDocumentDTO implements Serializable {
         return "ReportDocumentDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", status='" + getStatus() + "'" +
             ", reportTypeId=" + getReportTypeId() +
             ", reportTypeName='" + getReportTypeName() + "'" +
             ", reportConfigId=" + getReportConfigId() +
