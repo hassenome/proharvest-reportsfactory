@@ -10,6 +10,18 @@
       "fieldName": "status",
       "fieldType": "StatusName",
       "fieldValues": "GENERATED,UPDATED,ACTION_REQUIRED,ERROR,NEW"
+    },
+    {
+      "fieldName": "created",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "modified",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "file_name",
+      "fieldType": "String"
     }
   ],
   "relationships": [

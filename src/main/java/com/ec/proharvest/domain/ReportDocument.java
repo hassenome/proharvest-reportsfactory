@@ -9,6 +9,7 @@ import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +39,14 @@ public class ReportDocument implements Serializable {
     @Column(name = "status")
     private StatusName status;
 
+    @Column(name = "created")
+    private Instant created;
+
+    @Column(name = "modified")
+    private Instant modified;
+
+    @Column(name = "file_name")
+    private String file_name;
 
     // TODO: check for missing data when selecting non cached value; perhaps this should not be cached??
     @OneToMany(mappedBy = "reportDocument", fetch = FetchType.LAZY)
@@ -92,6 +101,45 @@ public class ReportDocument implements Serializable {
 
     public void setStatus(StatusName status) {
         this.status = status;
+    }
+
+    public Instant getCreated() {
+        return created;
+    }
+
+    public ReportDocument created(Instant created) {
+        this.created = created;
+        return this;
+    }
+
+    public void setCreated(Instant created) {
+        this.created = created;
+    }
+
+    public Instant getModified() {
+        return modified;
+    }
+
+    public ReportDocument modified(Instant modified) {
+        this.modified = modified;
+        return this;
+    }
+
+    public void setModified(Instant modified) {
+        this.modified = modified;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public ReportDocument file_name(String file_name) {
+        this.file_name = file_name;
+        return this;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
     }
 
     public Set<ReportingDataSet> getReportingDataSets() {
@@ -182,6 +230,9 @@ public class ReportDocument implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", status='" + getStatus() + "'" +
+            ", created='" + getCreated() + "'" +
+            ", modified='" + getModified() + "'" +
+            ", file_name='" + getFile_name() + "'" +
             "}";
     }
 }

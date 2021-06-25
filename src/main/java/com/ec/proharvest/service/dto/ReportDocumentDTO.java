@@ -1,5 +1,6 @@
 package com.ec.proharvest.service.dto;
 
+import java.time.Instant;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import com.ec.proharvest.domain.enumeration.StatusName;
@@ -15,6 +16,12 @@ public class ReportDocumentDTO implements Serializable {
     private String name;
 
     private StatusName status;
+
+    private Instant created;
+
+    private Instant modified;
+
+    private String file_name;
 
 
     private Long reportTypeId;
@@ -51,6 +58,30 @@ public class ReportDocumentDTO implements Serializable {
 
     public void setStatus(StatusName status) {
         this.status = status;
+    }
+
+    public Instant getCreated() {
+        return created;
+    }
+
+    public void setCreated(Instant created) {
+        this.created = created;
+    }
+
+    public Instant getModified() {
+        return modified;
+    }
+
+    public void setModified(Instant modified) {
+        this.modified = modified;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
     }
 
     public Long getReportTypeId() {
@@ -125,6 +156,9 @@ public class ReportDocumentDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", status='" + getStatus() + "'" +
+            ", created='" + getCreated() + "'" +
+            ", modified='" + getModified() + "'" +
+            ", file_name='" + getFile_name() + "'" +
             ", reportTypeId=" + getReportTypeId() +
             ", reportTypeName='" + getReportTypeName() + "'" +
             ", reportConfigId=" + getReportConfigId() +

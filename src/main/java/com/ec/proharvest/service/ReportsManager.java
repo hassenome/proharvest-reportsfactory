@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.ec.proharvest.domain.ReportDocument;
 import com.ec.proharvest.domain.ReportFile;
+import com.ec.proharvest.domain.enumeration.StatusName;
 import com.ec.proharvest.repository.ReportFileRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,9 @@ public abstract class ReportsManager {
         } else {
             reportFile = reportFiles.get(0);
             reportFile.setModified(Instant.now());
-        }                
+        }
+        reportDocument.setStatus(StatusName.GENERATED);                
         reportFile.setReportDocument(reportDocument);
-        // this.reportFileRepository.save(reportFile);
         return reportFile;
     }
 

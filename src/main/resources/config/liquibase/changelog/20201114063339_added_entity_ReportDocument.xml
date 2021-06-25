@@ -11,55 +11,34 @@
         Added the entity ReportDocument.
     -->
     <changeSet id="20201114063339-1" author="jhipster">
-        <createTable tableName="report_document">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="ux_report_document_name" />
-            </column>
+        <addColumn schemaName= "public"
+			tableName="report_document" >
             <column name="status" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="report_type_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="report_config_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="report_parameters_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
-        </createTable>
-    </changeSet>
-
-    <changeSet id="20201114063339-1-relations" author="jhipster">
-
+        </addColumn>
+        <addColumn schemaName= "public"
+        tableName="report_document" >
+        <column name="created" type="varchar(255)">
+            <constraints nullable="true" />
+        </column>
+        </addColumn>
+        <addColumn schemaName= "public"
+        tableName="report_document" >
+        <column name="modified" type="varchar(255)">
+            <constraints nullable="true" />
+        </column>
+        </addColumn>
+        <addColumn schemaName= "public"
+        tableName="report_document" >
+        <column name="file_name" type="varchar(255)">
+            <constraints nullable="true" />
+        </column>
+        </addColumn>
+        <addUniqueConstraint columnNames="name"  
+        constraintName="uk_report_document_name"  
+        schemaName="public"  
+        tableName="report_document"/>  
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
-
-    <!--
-        Load sample data generated with Faker.js
-        - This data can be easily edited using a CSV editor (or even MS Excel) and
-          is located in the 'src/main/resources/config/liquibase/fake-data' directory
-        - By default this data is applied when running with the JHipster 'dev' profile.
-          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
-          Spring Boot configuration key.
-    -->
-    <changeSet id="20201114063339-1-data" author="jhipster" context="faker">
-        <loadData
-                  file="config/liquibase/fake-data/report_document.csv"
-                  separator=";"
-                  tableName="report_document">
-            <column name="id" type="numeric"/>
-            <column name="name" type="string"/>
-            <column name="status" type="string"/>
-            <column name="report_type_id" type="numeric"/>
-            <column name="report_config_id" type="numeric"/>
-            <column name="report_parameters_id" type="numeric"/>
-            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
-        </loadData>
-    </changeSet>
-
 </databaseChangeLog>

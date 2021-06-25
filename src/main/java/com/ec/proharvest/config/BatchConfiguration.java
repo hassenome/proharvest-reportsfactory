@@ -5,11 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.ec.proharvest.batch.listener.JobCompletionNotificationListener;
 import com.ec.proharvest.batch.processor.ReportGenerationProcessor;
 import com.ec.proharvest.batch.processor.ReportingDataSetProcessor;
 import com.ec.proharvest.batch.reader.DomainReader;
+import com.ec.proharvest.batch.writer.CompositeDomainWriter;
+import com.ec.proharvest.batch.writer.DocumentGenerationWriter;
 import com.ec.proharvest.batch.writer.DomainWriter;
 import com.ec.proharvest.domain.ReportDocument;
 import com.ec.proharvest.domain.ReportFile;
@@ -30,6 +33,7 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
+import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -125,9 +129,28 @@ public class BatchConfiguration {
         return new DomainWriter<>(reportingDataSetRepository);
     }
 
+    // @Bean
+    // public DomainWriter<ReportFile> reportFileWriter() {
+    //     return new DomainWriter<>(reportFileRepository);
+    // }
+
+    // @Bean
+    // public DomainWriter<ReportFile> reportDocumentUpdate() {
+    //     return new DomainWriter<>(reportFileRepository);
+    // }
+
     @Bean
-    public DomainWriter<ReportFile> reportFileWriter() {
-        return new DomainWriter<>(reportFileRepository);
+    public CompositeDomainWriter<ReportFile, ReportDocument> reportGenerationWriter(){
+        Function<List<? extends ReportFile>, List<ReportDocument>> transformer = items -> {
+            List<ReportDocument> rpDocuments = new ArrayList<>();
+            items.forEach(reportFile -> {
+                reportFile.getReportDocument().setStatus(StatusName.GENERATED);
+                rpDocuments.add(reportFile.getReportDocument());
+            });
+            return rpDocuments;
+        };
+        return new CompositeDomainWriter<>(new DomainWriter<ReportFile>(reportFileRepository),new DomainWriter<ReportDocument>(reportDocumentRepository), transformer);
+        // TODO: handle errors
     }
 
     /*
@@ -149,7 +172,7 @@ public class BatchConfiguration {
         .<ReportDocument, ReportFile> chunk(10)
         .reader(reportsReader())
         .processor(reportGenerationProcessor())
-        .writer(reportFileWriter())
+        .writer(reportGenerationWriter())
         .build();
     } 
 

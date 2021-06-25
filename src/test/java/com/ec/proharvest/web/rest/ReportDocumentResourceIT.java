@@ -25,6 +25,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +53,15 @@ public class ReportDocumentResourceIT {
 
     private static final StatusName DEFAULT_STATUS = StatusName.GENERATED;
     private static final StatusName UPDATED_STATUS = StatusName.UPDATED;
+
+    private static final Instant DEFAULT_CREATED = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_CREATED = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Instant DEFAULT_MODIFIED = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_MODIFIED = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final String DEFAULT_FILE_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_FILE_NAME = "BBBBBBBBBB";
 
     @Autowired
     private ReportDocumentRepository reportDocumentRepository;
@@ -86,7 +97,10 @@ public class ReportDocumentResourceIT {
     public static ReportDocument createEntity(EntityManager em) {
         ReportDocument reportDocument = new ReportDocument()
             .name(DEFAULT_NAME)
-            .status(DEFAULT_STATUS);
+            .status(DEFAULT_STATUS)
+            .created(DEFAULT_CREATED)
+            .modified(DEFAULT_MODIFIED)
+            .file_name(DEFAULT_FILE_NAME);
         // Add required entity
         ReportType reportType;
         if (TestUtil.findAll(em, ReportType.class).isEmpty()) {
@@ -128,7 +142,10 @@ public class ReportDocumentResourceIT {
     public static ReportDocument createUpdatedEntity(EntityManager em) {
         ReportDocument reportDocument = new ReportDocument()
             .name(UPDATED_NAME)
-            .status(UPDATED_STATUS);
+            .status(UPDATED_STATUS)
+            .created(UPDATED_CREATED)
+            .modified(UPDATED_MODIFIED)
+            .file_name(UPDATED_FILE_NAME);
         // Add required entity
         ReportType reportType;
         if (TestUtil.findAll(em, ReportType.class).isEmpty()) {
@@ -184,6 +201,9 @@ public class ReportDocumentResourceIT {
         ReportDocument testReportDocument = reportDocumentList.get(reportDocumentList.size() - 1);
         assertThat(testReportDocument.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testReportDocument.getStatus()).isEqualTo(DEFAULT_STATUS);
+        assertThat(testReportDocument.getCreated()).isEqualTo(DEFAULT_CREATED);
+        assertThat(testReportDocument.getModified()).isEqualTo(DEFAULT_MODIFIED);
+        assertThat(testReportDocument.getFile_name()).isEqualTo(DEFAULT_FILE_NAME);
 
         // Validate the ReportDocument in Elasticsearch
         verify(mockReportDocumentSearchRepository, times(1)).save(testReportDocument);
@@ -235,6 +255,26 @@ public class ReportDocumentResourceIT {
 
     @Test
     @Transactional
+    public void checkFile_nameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportDocumentRepository.findAll().size();
+        // set the field null
+        reportDocument.setFile_name(null);
+
+        // Create the ReportDocument, which fails.
+        ReportDocumentDTO reportDocumentDTO = reportDocumentMapper.toDto(reportDocument);
+
+
+        restReportDocumentMockMvc.perform(post("/api/report-documents").with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(reportDocumentDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<ReportDocument> reportDocumentList = reportDocumentRepository.findAll();
+        assertThat(reportDocumentList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllReportDocuments() throws Exception {
         // Initialize the database
         reportDocumentRepository.saveAndFlush(reportDocument);
@@ -245,7 +285,10 @@ public class ReportDocumentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportDocument.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].created").value(hasItem(DEFAULT_CREATED.toString())))
+            .andExpect(jsonPath("$.[*].modified").value(hasItem(DEFAULT_MODIFIED.toString())))
+            .andExpect(jsonPath("$.[*].file_name").value(hasItem(DEFAULT_FILE_NAME)));
     }
     
     @Test
@@ -260,7 +303,10 @@ public class ReportDocumentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(reportDocument.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
+            .andExpect(jsonPath("$.created").value(DEFAULT_CREATED.toString()))
+            .andExpect(jsonPath("$.modified").value(DEFAULT_MODIFIED.toString()))
+            .andExpect(jsonPath("$.file_name").value(DEFAULT_FILE_NAME));
     }
     @Test
     @Transactional
@@ -284,7 +330,10 @@ public class ReportDocumentResourceIT {
         em.detach(updatedReportDocument);
         updatedReportDocument
             .name(UPDATED_NAME)
-            .status(UPDATED_STATUS);
+            .status(UPDATED_STATUS)
+            .created(UPDATED_CREATED)
+            .modified(UPDATED_MODIFIED)
+            .file_name(UPDATED_FILE_NAME);
         ReportDocumentDTO reportDocumentDTO = reportDocumentMapper.toDto(updatedReportDocument);
 
         restReportDocumentMockMvc.perform(put("/api/report-documents").with(csrf())
@@ -298,6 +347,9 @@ public class ReportDocumentResourceIT {
         ReportDocument testReportDocument = reportDocumentList.get(reportDocumentList.size() - 1);
         assertThat(testReportDocument.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testReportDocument.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testReportDocument.getCreated()).isEqualTo(UPDATED_CREATED);
+        assertThat(testReportDocument.getModified()).isEqualTo(UPDATED_MODIFIED);
+        assertThat(testReportDocument.getFile_name()).isEqualTo(UPDATED_FILE_NAME);
 
         // Validate the ReportDocument in Elasticsearch
         verify(mockReportDocumentSearchRepository, times(1)).save(testReportDocument);
@@ -361,6 +413,9 @@ public class ReportDocumentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportDocument.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].created").value(hasItem(DEFAULT_CREATED.toString())))
+            .andExpect(jsonPath("$.[*].modified").value(hasItem(DEFAULT_MODIFIED.toString())))
+            .andExpect(jsonPath("$.[*].file_name").value(hasItem(DEFAULT_FILE_NAME)));
     }
 }
